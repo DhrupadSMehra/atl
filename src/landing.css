@@ -1,0 +1,1288 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   landing.css — TinkerThix "Monochrome Technical" Landing Page
+   Scope: ONLY loaded by LandingPage component inside App.tsx.
+   All classes are prefixed with .landing- to guarantee zero bleed.
+   Palette: Pure Black #000 · Graphite #1C1C1E · Brilliant White #FFF
+═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── LANDING ROOT WRAPPER ──────────────────────────────────────────────────── */
+/* This wrapper is position: relative so it participates in normal scroll flow. */
+.landing-root {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #000000;
+  overflow-x: hidden;
+}
+
+/* ── FIXED AMBIENT BACKGROUND (pointer-events: none — never blocks clicks) ── */
+.landing-ambient {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* ── FOREGROUND (scrollable UI layer sits above ambient) ───────────────────── */
+.landing-fg {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  min-height: 100vh;
+  pointer-events: auto;
+}
+
+/* Extra content sections below the Hub component */
+.landing-extra {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 32px 120px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── UTILITY ───────────────────────────────────────────────────────────────── */
+.landing-mono-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #8e8e93;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: block;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BLUEPRINT GRID LAYER (background art)
+═══════════════════════════════════════════════════════════════════════════ */
+.landing-bp-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* Dot grid */
+.landing-bp-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+}
+
+/* Corner accent brackets */
+.landing-bp-corner {
+  position: absolute;
+  width: 40px; height: 40px;
+  border-color: rgba(255,255,255,0.12);
+  border-style: solid;
+}
+.landing-bp-tl { top: 20px; left: 20px; border-width: 1px 0 0 1px; }
+.landing-bp-tr { top: 20px; right: 20px; border-width: 1px 1px 0 0; }
+.landing-bp-bl { bottom: 20px; left: 20px; border-width: 0 0 1px 1px; }
+.landing-bp-br { bottom: 20px; right: 20px; border-width: 0 1px 1px 0; }
+
+/* Faint rings */
+.landing-bp-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.04);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+.landing-bp-ring-1 { width: 60vmin; height: 60vmin; border-style: dashed; }
+.landing-bp-ring-2 { width: 90vmin; height: 90vmin; }
+
+/* Crosshair center lines */
+.landing-bp-ch-h {
+  position: absolute;
+  top: 50%; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.04) 40%, rgba(255,255,255,0.04) 60%, transparent);
+}
+.landing-bp-ch-v {
+  position: absolute;
+  left: 50%; top: 0; bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.04) 40%, rgba(255,255,255,0.04) 60%, transparent);
+}
+
+/* Structural schematic corner frames */
+.landing-bp-schematic {
+  position: absolute;
+  border: 1px solid rgba(255,255,255,0.07);
+  padding: 10px 14px;
+}
+.landing-bp-sch-tl { top: 7%; left: 5%; width: 180px; height: 100px; border-right: none; border-bottom: none; }
+.landing-bp-sch-br { bottom: 8%; right: 5%; width: 200px; height: 120px; border-left: none; border-top: none; }
+.landing-bp-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.52rem;
+  color: rgba(255,255,255,0.18);
+  letter-spacing: 0.1em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   GHOST CODE MATRIX LAYER (background art)
+═══════════════════════════════════════════════════════════════════════════ */
+.landing-ghost-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.landing-ghost-line {
+  position: absolute;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 400;
+  color: #00ff66;
+  white-space: nowrap;
+  opacity: 1;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 6px rgba(0, 255, 102, 0.4);
+  transition: opacity 0.6s ease;
+}
+
+.landing-ghost-fading {
+  opacity: 0;
+}
+
+.landing-ghost-cursor {
+  display: inline-block;
+  width: 6px;
+  height: 12px;
+  background: #00ff66;
+  margin-left: 4px;
+  vertical-align: middle;
+  animation: landing-blink 0.8s step-end infinite;
+}
+
+@keyframes landing-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.landing-schematics-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   V3 HERO GLITCH SEQUENCE
+═══════════════════════════════════════════════════════════════════════════ */
+.landing-hero-section {
+  position: relative;
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  box-sizing: border-box;
+  overflow: hidden;
+  background: #000;
+}
+
+.landing-hero-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.landing-hero-glitch-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.8) 100%);
+}
+
+.landing-hero-grid-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(0, 255, 102, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 102, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.5;
+}
+
+.landing-hero-content {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.landing-hero-top-labels {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.landing-hero-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: #00ff66;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+}
+
+.landing-hero-center {
+  max-width: 1200px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.landing-hero-phase1 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: #00ff66;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.landing-hero-phase2 {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(3rem, 10vw, 8rem);
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-shadow: 0 0 40px rgba(255, 255, 255, 0.1);
+  margin-bottom: 24px;
+  text-transform: uppercase;
+}
+
+.landing-hero-phase3 {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  font-weight: 500;
+  color: #8e8e93;
+  max-width: 600px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.landing-hero-uplink-btn {
+  background: transparent;
+  border: 1px solid #00ff66;
+  color: #00ff66;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 16px 32px;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(4px);
+  margin-top: 2.5rem;
+}
+
+.landing-hero-uplink-btn:hover {
+  background: rgba(0, 255, 102, 0.1);
+  box-shadow: 0 0 20px rgba(0, 255, 102, 0.3);
+  transform: translateY(-2px);
+}
+
+.landing-hero-bottom-prompt {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.1em;
+}
+
+.landing-hero-cursor {
+  color: #00ff66;
+  animation: landing-blink 1s step-end infinite;
+}
+
+.landing-hero-telemetry-strip {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 15;
+  text-align: right;
+}
+
+.telemetry-item {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: rgba(0, 255, 102, 0.4);
+  letter-spacing: 0.15em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SHOWCASE GRID (Chronicles & CAD)
+═══════════════════════════════════════════════════════════════════════════ */
+.landing-showcase-section {
+  padding: 100px 48px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.landing-showcase-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+}
+
+.landing-showcase-col-left, .landing-showcase-col-right {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 1024px) {
+  .landing-showcase-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DEPARTMENT NODE MATRIX SECTION
+═══════════════════════════════════════════════════════════════════════════ */
+.landing-node-section {
+  padding: 80px 0 72px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+
+.landing-node-header { margin-bottom: 48px; }
+
+.landing-node-title {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.025em;
+  margin-bottom: 10px;
+}
+
+.landing-node-sub {
+  font-size: 0.88rem;
+  color: #8e8e93;
+  max-width: 540px;
+  line-height: 1.65;
+}
+
+.landing-node-body {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+/* SVG canvas */
+.landing-svg-wrapper {
+  width: 400px; height: 400px;
+  flex-shrink: 0;
+}
+
+.landing-dept-svg {
+  width: 100%; height: 100%;
+  overflow: visible;
+}
+
+.landing-node-group {
+  cursor: pointer;
+  outline: none;
+}
+
+/* Active connector line animation */
+.landing-node-line-active {
+  animation: landing-dash-flow 1.2s linear infinite;
+}
+
+@keyframes landing-dash-flow {
+  to { stroke-dashoffset: -14; }
+}
+
+/* Data block panel */
+.landing-datablock-panel {
+  min-height: 280px;
+  display: flex;
+  align-items: center;
+}
+
+.landing-datablock {
+  width: 100%;
+  background: #1c1c1e;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 28px 32px;
+}
+
+.landing-datablock-idle {
+  background: rgba(28,28,30,0.4);
+  border-style: dashed;
+  border-color: rgba(255,255,255,0.07);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  text-align: center;
+  min-height: 220px;
+}
+
+.landing-idle-icon   { opacity: 0.4; }
+.landing-idle-label  {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  color: #8e8e93;
+}
+.landing-idle-sub    {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.2);
+  max-width: 260px;
+  line-height: 1.6;
+}
+
+/* Data block internals */
+.landing-db-header   { margin-bottom: 18px; }
+.landing-db-title    {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+.landing-db-meta     { display: flex; align-items: center; gap: 8px; }
+.landing-db-badge    {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 3px;
+  color: #8e8e93;
+  letter-spacing: 0.08em;
+}
+.landing-db-dot      {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #34c759;
+  animation: landing-pulse-green 2s ease-in-out infinite;
+}
+@keyframes landing-pulse-green {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.35; }
+}
+.landing-db-online   {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  color: #34c759;
+  letter-spacing: 0.08em;
+}
+
+.landing-db-divider  { height: 1px; background: rgba(255,255,255,0.07); margin: 18px 0; }
+
+.landing-db-field        { margin-bottom: 16px; }
+.landing-db-field:last-child { margin-bottom: 0; }
+.landing-db-field-label  {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: #8e8e93;
+  letter-spacing: 0.1em;
+  margin-bottom: 6px;
+}
+.landing-db-field-value  {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.6;
+}
+
+.landing-db-stack    { display: flex; flex-wrap: wrap; gap: 6px; }
+.landing-db-chip     {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  padding: 4px 10px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 4px;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.03em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3D CAD WIREFRAME VIEWER SECTION
+═══════════════════════════════════════════════════════════════════════════ */
+.landing-cad-section {
+  padding: 72px 0 80px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+
+.landing-cad-header  { margin-bottom: 48px; }
+.landing-cad-title   {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.025em;
+  margin-bottom: 10px;
+}
+.landing-cad-sub     {
+  font-size: 0.88rem;
+  color: #8e8e93;
+  max-width: 520px;
+  line-height: 1.65;
+}
+
+.landing-cad-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 40px;
+  align-items: start;
+}
+
+/* CAD bounding box */
+.landing-cad-box {
+  position: relative;
+  background: rgba(10,10,10,0.85);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 4px;
+  height: 380px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  perspective: 600px;
+}
+
+/* Crosshair corner markers */
+.landing-cad-ch {
+  position: absolute;
+  width: 20px; height: 20px;
+}
+.landing-cad-ch-tl { top: 12px; left: 12px; }
+.landing-cad-ch-tr { top: 12px; right: 12px; }
+.landing-cad-ch-bl { bottom: 12px; left: 12px; }
+.landing-cad-ch-br { bottom: 12px; right: 12px; }
+
+.landing-ch-h {
+  position: absolute;
+  height: 1px; width: 100%;
+  top: 50%; transform: translateY(-50%);
+  background: rgba(255,255,255,0.3);
+}
+.landing-ch-v {
+  position: absolute;
+  width: 1px; height: 100%;
+  left: 50%; transform: translateX(-50%);
+  background: rgba(255,255,255,0.3);
+}
+
+.landing-cad-label-tl {
+  position: absolute;
+  top: 10px; left: 36px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55rem;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.1em;
+}
+.landing-cad-label-br {
+  position: absolute;
+  bottom: 10px; right: 36px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55rem;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.08em;
+}
+
+/* Telemetry strip */
+.landing-cad-telemetry {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  display: flex;
+  background: rgba(0,0,0,0.5);
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+.landing-cad-telemetry span {
+  flex: 1;
+  text-align: center;
+  padding: 6px 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55rem;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.08em;
+  border-right: 1px solid rgba(255,255,255,0.06);
+}
+.landing-cad-telemetry span:last-child { border-right: none; }
+
+/* 3D perspective scene */
+.landing-cad-scene {
+  width: 160px; height: 160px;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.05s linear;
+}
+
+/* Gimbal rings */
+.landing-cad-gimbal {
+  position: absolute;
+  border-radius: 50%;
+  top: 50%; left: 50%;
+  transform-style: preserve-3d;
+}
+.landing-cad-gimbal-outer {
+  width: 140px; height: 140px;
+  border: 1px dashed rgba(255,255,255,0.15);
+  transform: translate(-50%, -50%) rotateX(90deg);
+  animation: landing-gimbal-outer 8s linear infinite;
+}
+.landing-cad-gimbal-mid {
+  width: 100px; height: 100px;
+  border: 1px solid rgba(255,255,255,0.2);
+  transform: translate(-50%, -50%) rotateX(90deg);
+  animation: landing-gimbal-mid 5s linear infinite reverse;
+}
+
+@keyframes landing-gimbal-outer {
+  to { transform: translate(-50%,-50%) rotateX(90deg) rotate(360deg); }
+}
+@keyframes landing-gimbal-mid {
+  to { transform: translate(-50%,-50%) rotateX(90deg) rotate(360deg); }
+}
+
+/* CSS 3D cube */
+.landing-cad-cube {
+  position: absolute;
+  width: 64px; height: 64px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  transform-style: preserve-3d;
+}
+.landing-cad-face {
+  position: absolute;
+  width: 64px; height: 64px;
+  border: 1px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.02);
+}
+.landing-face-front  { transform: translateZ(32px); }
+.landing-face-back   { transform: translateZ(-32px) rotateY(180deg); }
+.landing-face-left   { transform: translateX(-32px) rotateY(-90deg); }
+.landing-face-right  { transform: translateX(32px) rotateY(90deg); }
+.landing-face-top    { transform: translateY(-32px) rotateX(90deg); }
+.landing-face-bottom { transform: translateY(32px) rotateX(-90deg); }
+
+/* Link arm segments */
+.landing-cad-arm {
+  position: absolute;
+  background: rgba(255,255,255,0.25);
+  top: 50%; left: 50%;
+  transform-origin: left center;
+  border-radius: 1px;
+}
+.landing-arm-1 { width: 70px; height: 2px; transform: translate(0,-50%) rotateZ(-30deg) translateZ(40px); }
+.landing-arm-2 { width: 55px; height: 1.5px; transform: translate(0,-50%) rotateZ(15deg) translateZ(-20px); }
+.landing-arm-3 { width: 40px; height: 1px; transform: translate(0,-50%) rotateZ(50deg) translateZ(10px); opacity: 0.5; }
+
+/* Axis indicators */
+.landing-cad-axis {
+  position: absolute;
+  top: 50%; left: 50%;
+  height: 1px;
+  transform-origin: left center;
+}
+.landing-axis-x { width: 72px; background: rgba(255,80,80,0.5); transform: translateY(-50%); }
+.landing-axis-y { width: 72px; background: rgba(80,255,80,0.5); transform: translateY(-50%) rotateZ(90deg); }
+.landing-axis-z { width: 72px; background: rgba(80,140,255,0.5); transform: translateY(-50%) rotateY(-90deg); }
+
+/* CAD controls sidebar */
+.landing-cad-controls { display: flex; flex-direction: column; gap: 24px; }
+
+.landing-cad-ctrl-btn {
+  width: 100%;
+  padding: 10px 16px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.5);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.landing-cad-ctrl-btn:hover {
+  border-color: rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.04);
+}
+.landing-cad-ctrl-btn.active {
+  border-color: rgba(255,255,255,0.4);
+  color: #ffffff;
+  background: rgba(255,255,255,0.06);
+}
+
+.landing-cad-specs {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.landing-spec-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.landing-spec-row:last-child { border-bottom: none; }
+.landing-spec-key {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  color: #8e8e93;
+  letter-spacing: 0.08em;
+}
+.landing-spec-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.7);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .landing-extra { padding: 0 24px 80px; }
+  .landing-node-body {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .landing-svg-wrapper {
+    width: 320px; height: 320px;
+    margin: 0 auto;
+  }
+  .landing-cad-wrapper { grid-template-columns: 1fr; }
+  .landing-cad-controls { flex-direction: row; flex-wrap: wrap; align-items: flex-start; }
+  .landing-cad-ctrl-btn { width: auto; flex-shrink: 0; }
+  .landing-cad-specs { flex: 1; min-width: 200px; }
+}
+
+@media (max-width: 640px) {
+  .landing-extra { padding: 0 16px 60px; }
+  .landing-node-section,
+  .landing-cad-section { padding: 48px 0; }
+  .landing-svg-wrapper { width: 280px; height: 280px; }
+  .landing-cad-box     { height: 280px; }
+  .landing-ambient     { opacity: 0.4; }
+  .landing-bp-sch-tl,
+  .landing-bp-sch-br   { display: none; }
+  .landing-cad-controls { flex-direction: column; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   R3F SPACE FLIGHT SIMULATOR SECTION
+   Palette: #000 background · #ffffff accents · #00ff88 terminal green
+═══════════════════════════════════════════════════════════════════════════ */
+
+/* Outer section container */
+.sim-section {
+  padding: 100px 48px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Header block */
+.sim-header { margin-bottom: 40px; }
+
+.sim-title {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.025em;
+  margin-bottom: 10px;
+}
+
+.sim-sub {
+  font-size: 0.88rem;
+  color: #8e8e93;
+  max-width: 560px;
+  line-height: 1.65;
+}
+
+/* Body: canvas (left) + data panel (right) */
+.sim-body {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 32px;
+  align-items: start;
+}
+
+/* ── Canvas wrapper ─────────────────────────────────────────────────────── */
+/* Must have an explicit height so the R3F Canvas fills it correctly.       */
+.sim-canvas-wrapper {
+  position: relative;
+  width: 100%;
+  height: 480px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  background: #000000;
+  /* CRITICAL: do NOT set pointer-events: none here — OrbitControls needs them */
+}
+
+/* The R3F <Canvas> fills the wrapper completely */
+.sim-canvas-wrapper canvas {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ── Corner crosshair decorations (HTML layer above canvas) ────────────── */
+.sim-corner {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-color: rgba(0, 255, 136, 0.5);
+  border-style: solid;
+  z-index: 2;
+  pointer-events: none;
+}
+.sim-corner-tl { top: 12px; left: 12px; border-width: 1px 0 0 1px; }
+.sim-corner-tr { top: 12px; right: 12px; border-width: 1px 1px 0 0; }
+.sim-corner-bl { bottom: 12px; left: 12px; border-width: 0 0 1px 1px; }
+.sim-corner-br { bottom: 12px; right: 12px; border-width: 0 1px 1px 0; }
+
+/* ── Floating text badges (HTML layer) ─────────────────────────────────── */
+.sim-badge-tl,
+.sim-badge-br {
+  position: absolute;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.52rem;
+  letter-spacing: 0.1em;
+  color: rgba(0, 255, 136, 0.4);
+  z-index: 2;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.sim-badge-tl { top: 10px; left: 36px; }
+.sim-badge-br { bottom: 10px; right: 36px; }
+
+/* ── Right-side data panel ──────────────────────────────────────────────── */
+.sim-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+}
+
+.sim-panel-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #8e8e93;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+/* Telemetry data rows */
+.sim-data-grid {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.sim-data-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.sim-data-row:last-child { border-bottom: none; }
+
+.sim-data-key {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  color: #8e8e93;
+  letter-spacing: 0.08em;
+}
+
+.sim-data-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #00ff88;
+  letter-spacing: 0.04em;
+}
+
+/* Keybind list */
+.sim-keybind-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sim-keybind {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.4);
+}
+
+.sim-keybind kbd {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 3px;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+/* ── Responsive overrides ───────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .sim-body {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .sim-panel {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  .sim-panel > * { flex: 1; min-width: 180px; }
+}
+
+@media (max-width: 640px) {
+  .sim-canvas-wrapper { height: 320px; }
+  .sim-section { padding: 48px 0 60px; }
+  .sim-panel { flex-direction: column; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PHOTO GALLERY ARCHIVE
+═══════════════════════════════════════════════════════════════════════════ */
+.landing-gallery-section {
+  padding: 80px 0;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+
+.landing-gallery-header { margin-bottom: 48px; }
+
+.landing-gallery-title {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.025em;
+  margin-bottom: 10px;
+}
+
+.landing-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px;
+}
+
+.landing-gallery-item {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Asymmetry */
+.landing-gallery-item-0 { transform: translateY(0); }
+.landing-gallery-item-1 { transform: translateY(40px); }
+.landing-gallery-item-2 { transform: translateY(0); }
+.landing-gallery-item-3 { transform: translateY(40px); }
+
+.landing-gallery-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #1c1c1e;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.landing-gallery-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(100%) contrast(1.2) brightness(0.8);
+  transition: all 0.4s ease;
+}
+
+.landing-gallery-item:hover .landing-gallery-img {
+  filter: grayscale(0%) contrast(1) brightness(1);
+}
+
+.landing-gallery-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.4));
+  pointer-events: none;
+}
+
+.landing-gallery-metrics {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.08em;
+}
+
+.landing-gallery-sep {
+  color: #00ff66;
+  opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+  .landing-gallery-grid {
+    grid-template-columns: 1fr;
+  }
+  .landing-gallery-item-1, .landing-gallery-item-3 {
+    transform: translateY(0);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MISSION MANIFESTO
+═══════════════════════════════════════════════════════════════════════════ */
+.landing-manifesto-section {
+  padding: 80px 0;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+
+.landing-manifesto-card {
+  background: #1c1c1e;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  padding: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.landing-manifesto-tags {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.landing-manifesto-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.1em;
+  padding: 4px 8px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 4px;
+}
+
+.landing-manifesto-header {
+  margin-bottom: 24px;
+}
+
+.landing-manifesto-text {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: rgba(255,255,255,0.85);
+  max-width: 900px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DUAL-MODEL CAD VIEWER OVERHAUL (Extras)
+═══════════════════════════════════════════════════════════════════════════ */
+.landing-cad-controls-top {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  z-index: 10;
+}
+
+.landing-cad-toggle {
+  background: rgba(0,0,0,0.6);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.6);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+
+.landing-cad-toggle:hover {
+  border-color: rgba(255,255,255,0.5);
+  color: #fff;
+}
+
+.landing-cad-toggle.active {
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+  font-weight: 700;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   RESEARCH EXHIBITION CHRONICLES
+═══════════════════════════════════════════════════════════════════════════ */
+.landing-exhibition-section {
+  padding: 80px 0;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+
+.landing-exhibition-header {
+  margin-bottom: 40px;
+}
+
+.landing-exhibition-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px;
+}
+
+.landing-exhibition-card {
+  background: transparent;
+  border-left: 2px solid #00ff66;
+  padding: 24px 32px;
+  display: flex;
+  flex-direction: column;
+}
+
+.landing-exhibition-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 16px;
+  letter-spacing: 0.05em;
+}
+
+.landing-exhibition-text {
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.7;
+  margin-bottom: 24px;
+  flex-grow: 1;
+}
+
+.landing-exhibition-tags {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.landing-exhibition-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55rem;
+  color: #00ff66;
+  background: rgba(0,255,102,0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.08em;
+}
+
+.landing-db-canvas-wrapper {
+  margin-top: 24px;
+  width: 100%;
+  height: 300px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.landing-photo-hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-sizing: border-box;
+}
+.hud-corner {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #fff;
+  opacity: 0.5;
+}
+.hud-tl { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+.hud-tr { top: 10px; right: 10px; border-left: none; border-bottom: none; }
+.hud-bl { bottom: 10px; left: 10px; border-right: none; border-top: none; }
+.hud-br { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+
+.hud-crosshair {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 30px; height: 30px;
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+}
+.hud-crosshair::before, .hud-crosshair::after {
+  content: '';
+  position: absolute;
+  background: rgba(255,255,255,0.5);
+}
+.hud-crosshair::before { top: -10px; bottom: -10px; left: 14px; width: 1px; }
+.hud-crosshair::after { left: -10px; right: -10px; top: 14px; height: 1px; }
+
+.hud-telemetry {
+  position: absolute;
+  bottom: 12px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: #00ff66;
+  opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+  .landing-exhibition-grid {
+    grid-template-columns: 1fr;
+  }
+}
