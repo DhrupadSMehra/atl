@@ -18,6 +18,10 @@ import { Stars, useGLTF, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import BootLoader from './components/BootLoader';
 import AgentUI from './components/AgentUI';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import LoginPage from './components/auth/LoginPage';
+import AdminSetupPage from './components/auth/AdminSetupPage';
+import UserBar from './components/auth/UserBar';
 import './hub.css';
 import './landing.css';
 // NOTE: App.css (dossier styles) is imported directly in AgentUI.tsx only.
@@ -1231,11 +1235,11 @@ const TeamDossier = ({ onBack }: TeamDossierProps) => (
 
 type AppView = 'booting' | 'landing' | 'team';
 
-export default function App() {
+function MainRouter() {
   const [view, setView] = useState<AppView>('booting');
+  const { isAuthenticated, isPendingAdminSetup } = useAuth();
 
   return (
-    // Bare fragment — no wrapper div so neither page's CSS bleeds upward
     <AnimatePresence mode="wait">
       {view === 'booting' && (
         <motion.div
@@ -1249,7 +1253,31 @@ export default function App() {
         </motion.div>
       )}
 
-      {view === 'landing' && (
+      {view !== 'booting' && isPendingAdminSetup && (
+        <motion.div
+          key="admin-setup"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.35 }}
+        >
+          <AdminSetupPage />
+        </motion.div>
+      )}
+
+      {view !== 'booting' && !isPendingAdminSetup && !isAuthenticated && (
+        <motion.div
+          key="login"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.35 }}
+        >
+          <LoginPage />
+        </motion.div>
+      )}
+
+      {view === 'landing' && isAuthenticated && !isPendingAdminSetup && (
         <motion.div
           key="landing"
           initial={{ opacity: 0 }}
@@ -1257,11 +1285,12 @@ export default function App() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.35 }}
         >
+          <UserBar />
           <LandingPage onNavigateTeam={() => setView('team')} />
         </motion.div>
       )}
 
-      {view === 'team' && (
+      {view === 'team' && isAuthenticated && !isPendingAdminSetup && (
         <motion.div
           key="team"
           initial={{ opacity: 0 }}
@@ -1269,9 +1298,19 @@ export default function App() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.35 }}
         >
+          <UserBar />
           <TeamDossier onBack={() => setView('landing')} />
         </motion.div>
       )}
     </AnimatePresence>
   );
 }
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <MainRouter />
+    </AuthProvider>
+  );
+}
+
