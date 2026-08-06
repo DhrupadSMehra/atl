@@ -1,8 +1,10 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
 import { connectDB } from './config/db';
 import authRoutes from './routes/auth';
+import noticeRoutes from './routes/notices';
 
 dotenv.config();
 
@@ -23,8 +25,14 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
   next();
 });
 
+// Serve uploaded files as static assets
+app.use('/uploads', express.static(path.join(process.cwd(), 'public', 'uploads')));
+
 // Mount Authentication Routes
 app.use('/api/auth', authRoutes);
+
+// Mount Notice Board Routes
+app.use('/api/notices', noticeRoutes);
 
 // Health check endpoint
 app.get('/api/health', (_req: Request, res: Response) => {
@@ -72,6 +80,16 @@ const startServer = async () => {
   console.log('  └─ GET  /api/auth/me');
   console.log('  └─ POST /api/auth/admin-setup');
   console.log('  └─ POST /api/auth/viewer-guest');
+  console.log('✓ Notice Routes Mounted at /api/notices');
+  console.log('  └─ GET    /api/notices');
+  console.log('  └─ GET    /api/notices/:id');
+  console.log('  └─ POST   /api/notices');
+  console.log('  └─ PUT    /api/notices/:id');
+  console.log('  └─ DELETE /api/notices/:id');
+  console.log('  └─ PATCH  /api/notices/:id/pin');
+  console.log('  └─ PATCH  /api/notices/:id/status');
+  console.log('  └─ POST   /api/notices/:id/duplicate');
+  console.log('✓ Static Uploads served at /uploads');
 
   app.listen(PORT, () => {
     console.log(`✓ Server Listening on http://localhost:${PORT}`);

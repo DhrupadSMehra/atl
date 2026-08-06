@@ -1,7 +1,7 @@
 /**
  * App.tsx — TinkerThix Root Router
  *
- * State-based navigation: 'booting' → 'landing' → 'team'
+ * State-based navigation: 'booting' → 'landing' → 'team' | 'notices'
  *
  * Layout isolation:
  *  - LandingPage: imports landing.css only. Black monochrome canvas.
@@ -22,6 +22,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import LoginPage from './components/auth/LoginPage';
 import AdminSetupPage from './components/auth/AdminSetupPage';
 import UserBar from './components/auth/UserBar';
+import NoticeBoardPage from './components/notices/NoticeBoardPage';
 import './hub.css';
 import './landing.css';
 // NOTE: App.css (dossier styles) is imported directly in AgentUI.tsx only.
@@ -947,7 +948,7 @@ const SpaceSimulator = () => {
 // NEW COMPONENTS FOR V2 EXPANSION
 // ═══════════════════════════════════════════════════════════════════
 
-const HeroIntro = ({ onNavigateTeam }: { onNavigateTeam: () => void }) => {
+const HeroIntro = ({ onNavigateTeam, onNavigateNotices }: { onNavigateTeam: () => void; onNavigateNotices?: () => void }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -1026,9 +1027,16 @@ const HeroIntro = ({ onNavigateTeam }: { onNavigateTeam: () => void }) => {
           <div className="landing-hero-phase1">// MISSION MANIFESTO // GATEWAY BEYOND THE IMPOSSIBLE</div>
           <h1 className="landing-hero-phase2">TINK ETHIX</h1>
           <div className="landing-hero-phase3">Advanced Robotics &amp; Mechanical Engineering Division<br />Seth Anandram Jaipuria School</div>
-          <button className="landing-hero-uplink-btn" onClick={onNavigateTeam}>
-            [ACCESS_PERSONNEL_DOSSIERS]
-          </button>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
+            {onNavigateNotices && (
+              <button className="landing-hero-uplink-btn" onClick={onNavigateNotices} id="hero-notices-btn">
+                [NOTICE_BOARD]
+              </button>
+            )}
+            <button className="landing-hero-uplink-btn" onClick={onNavigateTeam} id="hero-team-btn">
+              [ACCESS_PERSONNEL_DOSSIERS]
+            </button>
+          </div>
         </div>
 
         <div className="landing-hero-telemetry-strip">
@@ -1192,10 +1200,11 @@ const MediaCenterUplink = () => (
 // ═══════════════════════════════════════════════════════════════════
 
 interface LandingPageProps {
-  onNavigateTeam: () => void;
+  onNavigateTeam:    () => void;
+  onNavigateNotices: () => void;
 }
 
-const LandingPage = ({ onNavigateTeam }: LandingPageProps) => (
+const LandingPage = ({ onNavigateTeam, onNavigateNotices }: LandingPageProps) => (
   <div className="landing-root">
     {/* Fixed ambient background — pointer-events: none */}
     <div className="landing-ambient" aria-hidden="true">
@@ -1205,7 +1214,7 @@ const LandingPage = ({ onNavigateTeam }: LandingPageProps) => (
 
     {/* Foreground: UI Flow */}
     <div className="landing-fg">
-      <HeroIntro onNavigateTeam={onNavigateTeam} />
+      <HeroIntro onNavigateTeam={onNavigateTeam} onNavigateNotices={onNavigateNotices} />
       <div className="landing-extra">
         <ChroniclesAndCadShowcase />
         <SpaceSimulator />
@@ -1233,11 +1242,54 @@ const TeamDossier = ({ onBack }: TeamDossierProps) => (
 // ROOT ROUTER
 // ═══════════════════════════════════════════════════════════════════
 
-type AppView = 'booting' | 'landing' | 'team';
+type AppView = 'booting' | 'landing' | 'team' | 'notices';
 
 function MainRouter() {
   const [view, setView] = useState<AppView>('booting');
   const { isAuthenticated, isPendingAdminSetup } = useAuth();
+
+  // ── Deep-link: detect /notices path on initial load ──────────────
+  useEffect(() => {
+    if (window.location.pathname.startsWith('/notices')) {
+      // Will be set to notices once booting completes
+      // Store intent so BootLoader can hand off
+      sessionStorage.setItem('atl_initial_view', 'notices');
+    }
+  }, []);
+
+  // ── After boot completes, check for stored intent ────────────────
+  const handleBootComplete = () => {
+    const intent = sessionStorage.getItem('atl_initial_view');
+    if (intent === 'notices') {
+      sessionStorage.removeItem('atl_initial_view');
+      setView('notices');
+    } else {
+      setView('landing');
+    }
+  };
+
+  // ── Browser back button support ──────────────────────────────────
+  useEffect(() => {
+    const handlePopstate = () => {
+      const path = window.location.pathname;
+      if (path.startsWith('/notices')) {
+        setView('notices');
+      } else if (path === '/team') {
+        setView('team');
+      } else {
+        setView('landing');
+      }
+    };
+    window.addEventListener('popstate', handlePopstate);
+    return () => window.removeEventListener('popstate', handlePopstate);
+  }, []);
+
+  const goToNotices = () => setView('notices');
+  const goToTeam    = () => setView('team');
+  const goToLanding = () => {
+    window.history.pushState({}, '', '/');
+    setView('landing');
+  };
 
   return (
     <AnimatePresence mode="wait">
@@ -1249,7 +1301,7 @@ function MainRouter() {
           transition={{ duration: 0.3 }}
           style={{ position: 'fixed', inset: 0, background: '#000', zIndex: 9999 }}
         >
-          <BootLoader onComplete={() => setView('landing')} />
+          <BootLoader onComplete={handleBootComplete} />
         </motion.div>
       )}
 
@@ -1285,8 +1337,15 @@ function MainRouter() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.35 }}
         >
-          <UserBar />
-          <LandingPage onNavigateTeam={() => setView('team')} />
+          <UserBar
+            onNavigateNotices={goToNotices}
+            onNavigateTeam={goToTeam}
+            currentView="landing"
+          />
+          <LandingPage
+            onNavigateTeam={goToTeam}
+            onNavigateNotices={goToNotices}
+          />
         </motion.div>
       )}
 
@@ -1298,8 +1357,30 @@ function MainRouter() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.35 }}
         >
-          <UserBar />
-          <TeamDossier onBack={() => setView('landing')} />
+          <UserBar
+            onNavigateNotices={goToNotices}
+            onNavigateTeam={undefined}
+            currentView="team"
+          />
+          <TeamDossier onBack={goToLanding} />
+        </motion.div>
+      )}
+
+      {view === 'notices' && isAuthenticated && !isPendingAdminSetup && (
+        <motion.div
+          key="notices"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.35 }}
+          style={{ minHeight: '100vh' }}
+        >
+          <UserBar
+            onNavigateTeam={goToTeam}
+            onNavigateNotices={undefined}
+            currentView="notices"
+          />
+          <NoticeBoardPage onBack={goToLanding} />
         </motion.div>
       )}
     </AnimatePresence>

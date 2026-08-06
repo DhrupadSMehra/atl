@@ -400,6 +400,44 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Navigation links inside UserBar pill */
+.user-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.user-nav-link {
+  background: transparent;
+  border: none;
+  color: var(--auth-text-muted);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 3px 8px;
+  border-radius: 6px;
+  transition: color 0.2s ease, background-color 0.2s ease;
+  font-family: var(--auth-font-family);
+  white-space: nowrap;
+}
+
+.user-nav-link:hover {
+  color: var(--auth-text-main);
+  background-color: rgba(255, 255, 255, 0.07);
+}
+
+.user-nav-link.active {
+  color: var(--auth-text-main);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.user-nav-sep {
+  width: 1px;
+  height: 16px;
+  background-color: var(--auth-border-color);
+  margin: 0 4px;
+}
+
 .user-signout-btn {
   background: transparent;
   border: none;
