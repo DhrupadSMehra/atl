@@ -5,6 +5,8 @@ import path from 'path';
 import { connectDB } from './config/db';
 import authRoutes from './routes/auth';
 import noticeRoutes from './routes/notices';
+import memberRoutes from './routes/members';
+import stayBackRoutes from './routes/staybacks';
 
 dotenv.config();
 
@@ -31,8 +33,14 @@ app.use('/uploads', express.static(path.join(process.cwd(), 'public', 'uploads')
 // Mount Authentication Routes
 app.use('/api/auth', authRoutes);
 
+// Mount Member Routes
+app.use('/api/members', memberRoutes);
+
 // Mount Notice Board Routes
 app.use('/api/notices', noticeRoutes);
+
+// Mount StayBack Routes
+app.use('/api/staybacks', stayBackRoutes);
 
 // Health check endpoint
 app.get('/api/health', (_req: Request, res: Response) => {

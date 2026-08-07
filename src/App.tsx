@@ -23,6 +23,10 @@ import LoginPage from './components/auth/LoginPage';
 import AdminSetupPage from './components/auth/AdminSetupPage';
 import UserBar from './components/auth/UserBar';
 import NoticeBoardPage from './components/notices/NoticeBoardPage';
+import ATLRegistrationFlow from './components/auth/ATLRegistrationFlow';
+import MyProfileModal from './components/auth/MyProfileModal';
+import AdminMemberDirectory from './components/auth/AdminMemberDirectory';
+import StayBackPage from './components/staybacks/StayBackPage';
 import './hub.css';
 import './landing.css';
 // NOTE: App.css (dossier styles) is imported directly in AgentUI.tsx only.
@@ -1242,18 +1246,19 @@ const TeamDossier = ({ onBack }: TeamDossierProps) => (
 // ROOT ROUTER
 // ═══════════════════════════════════════════════════════════════════
 
-type AppView = 'booting' | 'landing' | 'team' | 'notices';
+type AppView = 'booting' | 'landing' | 'team' | 'notices' | 'staybacks' | 'directory';
 
 function MainRouter() {
   const [view, setView] = useState<AppView>('booting');
-  const { isAuthenticated, isPendingAdminSetup } = useAuth();
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const { isAuthenticated, isPendingAdminSetup, isPendingRegistration } = useAuth();
 
-  // ── Deep-link: detect /notices path on initial load ──────────────
+  // ── Deep-link: detect /notices or /staybacks path on initial load ──────────────
   useEffect(() => {
     if (window.location.pathname.startsWith('/notices')) {
-      // Will be set to notices once booting completes
-      // Store intent so BootLoader can hand off
       sessionStorage.setItem('atl_initial_view', 'notices');
+    } else if (window.location.pathname.startsWith('/staybacks')) {
+      sessionStorage.setItem('atl_initial_view', 'staybacks');
     }
   }, []);
 
@@ -1263,6 +1268,9 @@ function MainRouter() {
     if (intent === 'notices') {
       sessionStorage.removeItem('atl_initial_view');
       setView('notices');
+    } else if (intent === 'staybacks') {
+      sessionStorage.removeItem('atl_initial_view');
+      setView('staybacks');
     } else {
       setView('landing');
     }
@@ -1274,6 +1282,8 @@ function MainRouter() {
       const path = window.location.pathname;
       if (path.startsWith('/notices')) {
         setView('notices');
+      } else if (path.startsWith('/staybacks')) {
+        setView('staybacks');
       } else if (path === '/team') {
         setView('team');
       } else {
@@ -1284,106 +1294,176 @@ function MainRouter() {
     return () => window.removeEventListener('popstate', handlePopstate);
   }, []);
 
-  const goToNotices = () => setView('notices');
-  const goToTeam    = () => setView('team');
-  const goToLanding = () => {
+  const goToNotices   = () => setView('notices');
+  const goToTeam      = () => setView('team');
+  const goToStayBacks = () => setView('staybacks');
+  const goToDirectory = () => setView('directory');
+  const goToLanding   = () => {
     window.history.pushState({}, '', '/');
     setView('landing');
   };
 
   return (
-    <AnimatePresence mode="wait">
-      {view === 'booting' && (
-        <motion.div
-          key="boot"
-          initial={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          style={{ position: 'fixed', inset: 0, background: '#000', zIndex: 9999 }}
-        >
-          <BootLoader onComplete={handleBootComplete} />
-        </motion.div>
-      )}
+    <>
+      <AnimatePresence mode="wait">
+        {view === 'booting' && (
+          <motion.div
+            key="boot"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            style={{ position: 'fixed', inset: 0, background: '#000', zIndex: 9999 }}
+          >
+            <BootLoader onComplete={handleBootComplete} />
+          </motion.div>
+        )}
 
-      {view !== 'booting' && isPendingAdminSetup && (
-        <motion.div
-          key="admin-setup"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.35 }}
-        >
-          <AdminSetupPage />
-        </motion.div>
-      )}
+        {view !== 'booting' && isPendingAdminSetup && (
+          <motion.div
+            key="admin-setup"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35 }}
+          >
+            <AdminSetupPage />
+          </motion.div>
+        )}
 
-      {view !== 'booting' && !isPendingAdminSetup && !isAuthenticated && (
-        <motion.div
-          key="login"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.35 }}
-        >
-          <LoginPage />
-        </motion.div>
-      )}
+        {view !== 'booting' && !isPendingAdminSetup && isPendingRegistration && (
+          <motion.div
+            key="member-registration"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35 }}
+          >
+            <ATLRegistrationFlow />
+          </motion.div>
+        )}
 
-      {view === 'landing' && isAuthenticated && !isPendingAdminSetup && (
-        <motion.div
-          key="landing"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.35 }}
-        >
-          <UserBar
-            onNavigateNotices={goToNotices}
-            onNavigateTeam={goToTeam}
-            currentView="landing"
-          />
-          <LandingPage
-            onNavigateTeam={goToTeam}
-            onNavigateNotices={goToNotices}
-          />
-        </motion.div>
-      )}
+        {view !== 'booting' && !isPendingAdminSetup && !isPendingRegistration && !isAuthenticated && (
+          <motion.div
+            key="login"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35 }}
+          >
+            <LoginPage />
+          </motion.div>
+        )}
 
-      {view === 'team' && isAuthenticated && !isPendingAdminSetup && (
-        <motion.div
-          key="team"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.35 }}
-        >
-          <UserBar
-            onNavigateNotices={goToNotices}
-            onNavigateTeam={undefined}
-            currentView="team"
-          />
-          <TeamDossier onBack={goToLanding} />
-        </motion.div>
-      )}
+        {view === 'landing' && isAuthenticated && !isPendingAdminSetup && !isPendingRegistration && (
+          <motion.div
+            key="landing"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35 }}
+          >
+            <UserBar
+              onNavigateNotices={goToNotices}
+              onNavigateTeam={goToTeam}
+              onNavigateStayBacks={goToStayBacks}
+              onOpenProfile={() => setIsProfileOpen(true)}
+              onOpenDirectory={goToDirectory}
+              currentView="landing"
+            />
+            <LandingPage
+              onNavigateTeam={goToTeam}
+              onNavigateNotices={goToNotices}
+            />
+          </motion.div>
+        )}
 
-      {view === 'notices' && isAuthenticated && !isPendingAdminSetup && (
-        <motion.div
-          key="notices"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.35 }}
-          style={{ minHeight: '100vh' }}
-        >
-          <UserBar
-            onNavigateTeam={goToTeam}
-            onNavigateNotices={undefined}
-            currentView="notices"
-          />
-          <NoticeBoardPage onBack={goToLanding} />
-        </motion.div>
-      )}
-    </AnimatePresence>
+        {view === 'team' && isAuthenticated && !isPendingAdminSetup && !isPendingRegistration && (
+          <motion.div
+            key="team"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35 }}
+          >
+            <UserBar
+              onNavigateNotices={goToNotices}
+              onNavigateTeam={undefined}
+              onNavigateStayBacks={goToStayBacks}
+              onOpenProfile={() => setIsProfileOpen(true)}
+              onOpenDirectory={goToDirectory}
+              currentView="team"
+            />
+            <TeamDossier onBack={goToLanding} />
+          </motion.div>
+        )}
+
+        {view === 'notices' && isAuthenticated && !isPendingAdminSetup && !isPendingRegistration && (
+          <motion.div
+            key="notices"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35 }}
+            style={{ minHeight: '100vh' }}
+          >
+            <UserBar
+              onNavigateTeam={goToTeam}
+              onNavigateNotices={undefined}
+              onNavigateStayBacks={goToStayBacks}
+              onOpenProfile={() => setIsProfileOpen(true)}
+              onOpenDirectory={goToDirectory}
+              currentView="notices"
+            />
+            <NoticeBoardPage onBack={goToLanding} />
+          </motion.div>
+        )}
+
+        {view === 'staybacks' && isAuthenticated && !isPendingAdminSetup && !isPendingRegistration && (
+          <motion.div
+            key="staybacks"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35 }}
+            style={{ minHeight: '100vh' }}
+          >
+            <UserBar
+              onNavigateTeam={goToTeam}
+              onNavigateNotices={goToNotices}
+              onNavigateStayBacks={undefined}
+              onOpenProfile={() => setIsProfileOpen(true)}
+              onOpenDirectory={goToDirectory}
+              currentView="staybacks"
+            />
+            <StayBackPage onBack={goToLanding} />
+          </motion.div>
+        )}
+
+        {view === 'directory' && isAuthenticated && !isPendingAdminSetup && !isPendingRegistration && (
+          <motion.div
+            key="directory"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35 }}
+            style={{ minHeight: '100vh' }}
+          >
+            <UserBar
+              onNavigateTeam={goToTeam}
+              onNavigateNotices={goToNotices}
+              onNavigateStayBacks={goToStayBacks}
+              onOpenProfile={() => setIsProfileOpen(true)}
+              onOpenDirectory={undefined}
+              currentView="directory"
+            />
+            <AdminMemberDirectory onBack={goToLanding} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Global My Profile Modal */}
+      <MyProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
+    </>
   );
 }
 

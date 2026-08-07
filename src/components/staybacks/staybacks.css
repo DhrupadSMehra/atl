@@ -1,0 +1,887 @@
+/* =========================================================
+   ATL WEBSITE — STAYBACK MANAGEMENT SYSTEM STYLES
+   Design Language:
+   - Matte dark backgrounds (#000000 / #09090c / #0c0c0e)
+   - Outlined Pill Badges for statuses
+   - Glowing Cyber Accents (#00ff66, #00e5ff, #ff4d4d, #ffaa00)
+   - Crisp Typography & Generous Spacing
+   ========================================================= */
+
+.stayback-page-container {
+  min-height: 100vh;
+  background-color: #000000;
+  color: #ffffff;
+  padding: 96px 24px 60px 24px;
+  box-sizing: border-box;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.stayback-max-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* Header & Title Section */
+.stayback-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.stayback-title-area {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stayback-badge-sub {
+  font-size: 0.725rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #00ff66;
+  text-transform: uppercase;
+  background: rgba(0, 255, 102, 0.1);
+  padding: 3px 10px;
+  border-radius: 4px;
+  width: fit-content;
+  border: 1px solid rgba(0, 255, 102, 0.25);
+}
+
+.stayback-page-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.stayback-page-desc {
+  font-size: 0.95rem;
+  color: #a1a1aa;
+  margin: 0;
+}
+
+/* Primary CTA Button for Admins */
+.create-stayback-btn {
+  background: #00ff66;
+  color: #000000;
+  font-weight: 700;
+  font-size: 0.875rem;
+  border: 1px solid #00ff66;
+  border-radius: 10px;
+  padding: 10px 18px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 16px rgba(0, 255, 102, 0.25);
+}
+
+.create-stayback-btn:hover {
+  background: #00e65c;
+  transform: translateY(-2px);
+}
+
+/* Tabs & Controls Bar */
+.stayback-tabs-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 12px;
+}
+
+.stayback-tab-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #a1a1aa;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stayback-tab-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.stayback-tab-btn.active {
+  color: #ffffff;
+  background: #121217;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Filter Controls Bar */
+.stayback-controls-bar {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.stayback-search-box {
+  flex: 1;
+  min-width: 240px;
+  position: relative;
+}
+
+.search-input-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: #71717a;
+}
+
+.stayback-input {
+  width: 100%;
+  height: 44px;
+  background: #09090c;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  padding: 0 14px 0 40px;
+  color: #ffffff;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.stayback-input:focus {
+  border-color: #00ff66;
+}
+
+.stayback-select {
+  height: 44px;
+  background: #09090c;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  padding: 0 14px;
+  color: #ffffff;
+  font-size: 0.875rem;
+  outline: none;
+  cursor: pointer;
+  min-width: 160px;
+}
+
+.stayback-select option {
+  background: #0e0e12;
+  color: #ffffff;
+}
+
+/* =========================================================
+   OUTLINED STATUS PILL BADGES (Reusable Design System)
+   ========================================================= */
+
+.status-pill,
+.dept-pill {
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: fit-content;
+  white-space: nowrap;
+  box-sizing: border-box;
+  line-height: 1;
+  border: 1px solid transparent;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.badge-open {
+  background: rgba(0, 255, 102, 0.08);
+  color: #00ff66;
+  border-color: rgba(0, 255, 102, 0.4);
+}
+
+.badge-closed,
+.badge-full {
+  background: rgba(255, 170, 0, 0.08);
+  color: #ffaa00;
+  border-color: rgba(255, 170, 0, 0.4);
+}
+
+.badge-cancelled,
+.badge-rejected {
+  background: rgba(255, 77, 77, 0.08);
+  color: #ff4d4d;
+  border-color: rgba(255, 77, 77, 0.4);
+}
+
+.badge-accepted {
+  background: rgba(0, 230, 118, 0.08);
+  color: #00e676;
+  border-color: rgba(0, 230, 118, 0.4);
+}
+
+.badge-pending {
+  background: rgba(0, 229, 255, 0.08);
+  color: #00e5ff;
+  border-color: rgba(0, 229, 255, 0.4);
+}
+
+.badge-completed {
+  background: rgba(168, 85, 247, 0.08);
+  color: #a855f7;
+  border-color: rgba(168, 85, 247, 0.4);
+}
+
+.badge-draft {
+  background: rgba(255, 255, 255, 0.06);
+  color: #a1a1aa;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Outlined Department Pills */
+.dept-pill {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #d4d4d8;
+}
+
+.dept-pill.matching {
+  background: rgba(0, 255, 102, 0.08);
+  border-color: rgba(0, 255, 102, 0.35);
+  color: #00ff66;
+}
+
+/* =========================================================
+   STAYBACK CARDS GRID
+   ========================================================= */
+
+.stayback-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+.stayback-card {
+  background: #09090c;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.stayback-card:hover {
+  border-color: rgba(0, 255, 102, 0.4);
+  transform: translateY(-3px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7);
+}
+
+.stayback-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.card-project-tag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #00ff66;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 2px 0;
+  display: block;
+}
+
+.card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.card-meta-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #050507;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 12px 14px;
+  border-radius: 10px;
+}
+
+.card-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.825rem;
+  color: #a1a1aa;
+}
+
+.card-meta-icon {
+  width: 14px;
+  height: 14px;
+  color: #71717a;
+  flex-shrink: 0;
+}
+
+/* Live Capacity Progress Bar */
+.card-capacity-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.capacity-text-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.775rem;
+  font-weight: 600;
+}
+
+.capacity-accepted-label {
+  color: #ffffff;
+}
+
+.capacity-remaining-label {
+  color: #00ff66;
+}
+
+.capacity-remaining-label.full {
+  color: #ffaa00;
+}
+
+.capacity-bar-bg {
+  width: 100%;
+  height: 6px;
+  background: #181820;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.capacity-bar-fill {
+  height: 100%;
+  background: #00ff66;
+  border-radius: 9999px;
+  transition: width 0.3s ease;
+}
+
+.capacity-bar-fill.full {
+  background: #ffaa00;
+}
+
+.card-depts-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.stayback-card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 14px;
+  margin-top: 4px;
+}
+
+.card-countdown {
+  font-size: 0.775rem;
+  color: #71717a;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.card-countdown.urgent {
+  color: #ffaa00;
+  font-weight: 600;
+}
+
+/* Contextual Admin "Manage" Button */
+.admin-manage-btn {
+  background: #121217;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+
+.admin-manage-btn:hover {
+  background: #00ff66;
+  color: #000000;
+  border-color: #00ff66;
+}
+
+/* =========================================================
+   STAYBACK DETAIL OVERLAY
+   ========================================================= */
+
+.stayback-detail-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.stayback-detail-card {
+  width: 100%;
+  max-width: 680px;
+  max-height: 90vh;
+  background: #0c0c0e;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 20px;
+  padding: 36px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  box-shadow: 0 32px 64px rgba(0, 0, 0, 0.95);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: relative;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 18px;
+}
+
+.detail-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 4px 0 0 0;
+  letter-spacing: -0.02em;
+}
+
+/* Department Eligibility Banner */
+.eligibility-banner {
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.eligibility-banner.matched {
+  background: rgba(0, 255, 102, 0.08);
+  border: 1px solid rgba(0, 255, 102, 0.3);
+  color: #00ff66;
+}
+
+.eligibility-banner.unmatched {
+  background: rgba(255, 170, 0, 0.08);
+  border: 1px solid rgba(255, 170, 0, 0.3);
+  color: #ffaa00;
+}
+
+.detail-section-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #a1a1aa;
+  margin: 0 0 8px 0;
+}
+
+.detail-description-text {
+  font-size: 0.925rem;
+  line-height: 1.6;
+  color: #e4e4e7;
+  margin: 0;
+  white-space: pre-line;
+}
+
+/* Audit Metadata Box */
+.audit-metadata-box {
+  background: #050507;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.775rem;
+  color: #71717a;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* =========================================================
+   APPLICATION WORKFLOW MODAL & EMAIL PREVIEW
+   ========================================================= */
+
+.email-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+@media (max-width: 600px) {
+  .email-actions-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.email-action-btn {
+  height: 48px;
+  background: #141419;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 0.825rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.email-action-btn:hover {
+  border-color: #00ff66;
+  background: #1a1a22;
+  color: #00ff66;
+}
+
+.email-action-btn.primary {
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+}
+
+.email-action-btn.primary:hover {
+  background: #00ff66;
+  color: #000000;
+  border-color: #00ff66;
+}
+
+.email-preview-box {
+  background: #050507;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  padding: 20px;
+  font-family: monospace;
+  font-size: 0.825rem;
+  color: #e4e4e7;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+/* =========================================================
+   MY APPLICATIONS LIST & TIMELINE
+   ========================================================= */
+
+.my-apps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.my-app-card {
+  background: #09090c;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.my-app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+/* Visual Status Timeline */
+.app-status-timeline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #050507;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 14px 18px;
+  border-radius: 12px;
+  overflow-x: auto;
+}
+
+.timeline-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.775rem;
+  font-weight: 600;
+  color: #71717a;
+  white-space: nowrap;
+}
+
+.timeline-step.completed {
+  color: #00ff66;
+}
+
+.timeline-step.rejected {
+  color: #ff4d4d;
+}
+
+.timeline-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #27272a;
+}
+
+.timeline-step.completed .timeline-dot {
+  background: #00ff66;
+  box-shadow: 0 0 8px rgba(0, 255, 102, 0.5);
+}
+
+.timeline-step.rejected .timeline-dot {
+  background: #ff4d4d;
+}
+
+.timeline-line {
+  flex: 1;
+  min-width: 24px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.timeline-line.active {
+  background: #00ff66;
+}
+
+.my-app-message-box {
+  background: #0f0f14;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 14px 18px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  color: #d4d4d8;
+  line-height: 1.45;
+}
+
+/* =========================================================
+   CONTEXTUAL ADMIN OVERLAY & REVIEW ROSTER
+   ========================================================= */
+
+.admin-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 600px) {
+  .admin-overview-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.admin-stat-card {
+  background: #050507;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-size: 0.725rem;
+  color: #a1a1aa;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.stat-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* Application Review Table */
+.admin-roster-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.admin-roster-table th {
+  text-align: left;
+  padding: 10px 14px;
+  background: #050507;
+  color: #a1a1aa;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.admin-roster-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  vertical-align: middle;
+}
+
+.admin-action-btn-accept {
+  background: rgba(0, 255, 102, 0.15);
+  color: #00ff66;
+  border: 1px solid rgba(0, 255, 102, 0.4);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-action-btn-accept:hover {
+  background: #00ff66;
+  color: #000000;
+}
+
+.admin-action-btn-reject {
+  background: rgba(255, 77, 77, 0.15);
+  color: #ff4d4d;
+  border: 1px solid rgba(255, 77, 77, 0.4);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-action-btn-reject:hover {
+  background: #ff4d4d;
+  color: #ffffff;
+}
+
+/* Refined Cohesive Admin Action Buttons */
+.admin-actions-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-edit-btn {
+  height: 38px;
+  padding: 0 14px;
+  background: #141419;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-edit-btn:hover {
+  background: #1a1a22;
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #00ff66;
+}
+
+.admin-delete-btn {
+  height: 38px;
+  padding: 0 14px;
+  background: rgba(255, 77, 77, 0.12);
+  border: 1px solid rgba(255, 77, 77, 0.35);
+  border-radius: 10px;
+  color: #ff4d4d;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-delete-btn:hover {
+  background: #ff4d4d;
+  color: #ffffff;
+  border-color: #ff4d4d;
+}
+
+/* Applicant Roster Spacing & Avatar Alignment */
+.roster-section-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.roster-filter-bar {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.roster-applicant-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.roster-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #1a1a24;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}

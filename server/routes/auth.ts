@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
 import dotenv from 'dotenv';
 import { User, IUser, AdminPosition } from '../models/User';
+import { Member } from '../models/Member';
 import { verifyToken, AuthRequest } from '../middleware/auth';
 
 dotenv.config();
@@ -103,8 +104,24 @@ router.post('/google', async (req: Request, res: Response) => {
 
     console.log(`✓ Google Token Verified for Email: ${email}`);
 
-    // Lookup user in MongoDB
+    // Lookup user and member in MongoDB
     let user = await User.findOne({ $or: [{ googleId }, { email }] });
+    const memberDoc = await Member.findOne({ $or: [{ googleId }, { email }] });
+
+    const memberData = memberDoc && memberDoc.profileCompleted ? {
+      memberId: memberDoc._id.toString(),
+      googleId: memberDoc.googleId,
+      email: memberDoc.email,
+      fullName: memberDoc.fullName,
+      studentClass: memberDoc.studentClass,
+      section: memberDoc.section,
+      contactNumber: memberDoc.contactNumber,
+      department: memberDoc.department,
+      role: memberDoc.role,
+      profileCompleted: memberDoc.profileCompleted,
+      createdAt: memberDoc.createdAt,
+      updatedAt: memberDoc.updatedAt
+    } : null;
 
     if (user) {
       console.log(`✓ User found in MongoDB. Role: ${user.role}`);
@@ -128,7 +145,9 @@ router.post('/google', async (req: Request, res: Response) => {
           role: user.role,
           adminProfile: user.adminProfile
         },
-        isExistingAdmin: user.role === 'admin'
+        isExistingAdmin: user.role === 'admin',
+        member: memberData,
+        hasMemberProfile: !!memberData
       });
       return;
     }
@@ -162,7 +181,9 @@ router.post('/google', async (req: Request, res: Response) => {
         profilePicture: newUser.profilePicture,
         role: newUser.role
       },
-      isExistingAdmin: false
+      isExistingAdmin: false,
+      member: memberData,
+      hasMemberProfile: !!memberData
     });
 
   } catch (error: any) {
@@ -286,6 +307,25 @@ router.get('/me', verifyToken, async (req: AuthRequest, res: Response) => {
     }
 
     const dbUser = await User.findOne({ googleId: req.user.googleId });
+    const memberDoc = await Member.findOne({
+      $or: [{ googleId: req.user.googleId }, { email: req.user.email.toLowerCase() }]
+    });
+
+    const memberData = memberDoc && memberDoc.profileCompleted ? {
+      memberId: memberDoc._id.toString(),
+      googleId: memberDoc.googleId,
+      email: memberDoc.email,
+      fullName: memberDoc.fullName,
+      studentClass: memberDoc.studentClass,
+      section: memberDoc.section,
+      contactNumber: memberDoc.contactNumber,
+      department: memberDoc.department,
+      role: memberDoc.role,
+      profileCompleted: memberDoc.profileCompleted,
+      createdAt: memberDoc.createdAt,
+      updatedAt: memberDoc.updatedAt
+    } : null;
+
     if (dbUser) {
       res.json({
         success: true,
@@ -297,14 +337,18 @@ router.get('/me', verifyToken, async (req: AuthRequest, res: Response) => {
           profilePicture: dbUser.profilePicture,
           role: dbUser.role,
           adminProfile: dbUser.adminProfile
-        }
+        },
+        member: memberData,
+        hasMemberProfile: !!memberData
       });
       return;
     }
 
     res.json({
       success: true,
-      user: req.user
+      user: req.user,
+      member: memberData,
+      hasMemberProfile: !!memberData
     });
   } catch (error: any) {
     res.status(500).json({ success: false, error: error.message });
