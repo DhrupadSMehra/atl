@@ -7,6 +7,7 @@ import authRoutes from './routes/auth';
 import noticeRoutes from './routes/notices';
 import memberRoutes from './routes/members';
 import stayBackRoutes from './routes/staybacks';
+import communityRoutes from './routes/community';
 
 dotenv.config();
 
@@ -42,6 +43,9 @@ app.use('/api/notices', noticeRoutes);
 // Mount StayBack Routes
 app.use('/api/staybacks', stayBackRoutes);
 
+// Mount Community Routes
+app.use('/api/community', communityRoutes);
+
 // Health check endpoint
 app.get('/api/health', (_req: Request, res: Response) => {
   res.json({
@@ -59,6 +63,11 @@ app.use('/api', (req: Request, res: Response) => {
     success: false,
     error: `API endpoint '${req.method} ${req.originalUrl}' not found on server.`
   });
+});
+
+app.post('/api/log-error', (req: Request, res: Response) => {
+  console.error('[FRONTEND ERROR]', req.body);
+  res.sendStatus(200);
 });
 
 // Global Error Handler

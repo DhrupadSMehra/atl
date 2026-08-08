@@ -9,7 +9,8 @@ interface UserBarProps {
   onNavigateStayBacks?: () => void;
   onOpenProfile?: () => void;
   onOpenDirectory?: () => void;
-  currentView?: 'landing' | 'team' | 'notices' | 'staybacks' | 'directory';
+  onNavigateCommunity?: () => void;
+  currentView?: 'landing' | 'team' | 'notices' | 'staybacks' | 'directory' | 'community';
 }
 
 export const UserBar: React.FC<UserBarProps> = ({
@@ -18,6 +19,7 @@ export const UserBar: React.FC<UserBarProps> = ({
   onNavigateStayBacks,
   onOpenProfile,
   onOpenDirectory,
+  onNavigateCommunity,
   currentView,
 }) => {
   const { user, member, role, logout, isAuthenticated } = useAuth();
@@ -61,6 +63,16 @@ export const UserBar: React.FC<UserBarProps> = ({
             id="nav-staybacks-btn"
           >
             StayBacks
+          </button>
+        )}
+        {onNavigateCommunity && (
+          <button
+            type="button"
+            className={`user-nav-link ${currentView === 'community' ? 'active' : ''}`}
+            onClick={onNavigateCommunity}
+            id="nav-community-btn"
+          >
+            Community
           </button>
         )}
         {isAdmin && onOpenDirectory && (

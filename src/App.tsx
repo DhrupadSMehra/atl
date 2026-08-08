@@ -27,6 +27,7 @@ import ATLRegistrationFlow from './components/auth/ATLRegistrationFlow';
 import MyProfileModal from './components/auth/MyProfileModal';
 import AdminMemberDirectory from './components/auth/AdminMemberDirectory';
 import StayBackPage from './components/staybacks/StayBackPage';
+import CommunityBoardPage from './components/community/CommunityBoardPage';
 import './hub.css';
 import './landing.css';
 // NOTE: App.css (dossier styles) is imported directly in AgentUI.tsx only.
@@ -1246,7 +1247,7 @@ const TeamDossier = ({ onBack }: TeamDossierProps) => (
 // ROOT ROUTER
 // ═══════════════════════════════════════════════════════════════════
 
-type AppView = 'booting' | 'landing' | 'team' | 'notices' | 'staybacks' | 'directory';
+type AppView = 'booting' | 'landing' | 'team' | 'notices' | 'staybacks' | 'directory' | 'community';
 
 function MainRouter() {
   const [view, setView] = useState<AppView>('booting');
@@ -1298,6 +1299,7 @@ function MainRouter() {
   const goToTeam      = () => setView('team');
   const goToStayBacks = () => setView('staybacks');
   const goToDirectory = () => setView('directory');
+  const goToCommunity = () => setView('community');
   const goToLanding   = () => {
     window.history.pushState({}, '', '/');
     setView('landing');
@@ -1366,6 +1368,7 @@ function MainRouter() {
               onNavigateNotices={goToNotices}
               onNavigateTeam={goToTeam}
               onNavigateStayBacks={goToStayBacks}
+              onNavigateCommunity={goToCommunity}
               onOpenProfile={() => setIsProfileOpen(true)}
               onOpenDirectory={goToDirectory}
               currentView="landing"
@@ -1389,6 +1392,7 @@ function MainRouter() {
               onNavigateNotices={goToNotices}
               onNavigateTeam={undefined}
               onNavigateStayBacks={goToStayBacks}
+              onNavigateCommunity={goToCommunity}
               onOpenProfile={() => setIsProfileOpen(true)}
               onOpenDirectory={goToDirectory}
               currentView="team"
@@ -1410,6 +1414,7 @@ function MainRouter() {
               onNavigateTeam={goToTeam}
               onNavigateNotices={undefined}
               onNavigateStayBacks={goToStayBacks}
+              onNavigateCommunity={goToCommunity}
               onOpenProfile={() => setIsProfileOpen(true)}
               onOpenDirectory={goToDirectory}
               currentView="notices"
@@ -1431,6 +1436,7 @@ function MainRouter() {
               onNavigateTeam={goToTeam}
               onNavigateNotices={goToNotices}
               onNavigateStayBacks={undefined}
+              onNavigateCommunity={goToCommunity}
               onOpenProfile={() => setIsProfileOpen(true)}
               onOpenDirectory={goToDirectory}
               currentView="staybacks"
@@ -1452,11 +1458,34 @@ function MainRouter() {
               onNavigateTeam={goToTeam}
               onNavigateNotices={goToNotices}
               onNavigateStayBacks={goToStayBacks}
+              onNavigateCommunity={goToCommunity}
               onOpenProfile={() => setIsProfileOpen(true)}
               onOpenDirectory={undefined}
               currentView="directory"
             />
             <AdminMemberDirectory onBack={goToLanding} />
+          </motion.div>
+        )}
+
+        {view === 'community' && isAuthenticated && !isPendingAdminSetup && !isPendingRegistration && (
+          <motion.div
+            key="community"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35 }}
+            style={{ minHeight: '100vh' }}
+          >
+            <UserBar
+              onNavigateTeam={goToTeam}
+              onNavigateNotices={goToNotices}
+              onNavigateStayBacks={goToStayBacks}
+              onNavigateCommunity={undefined}
+              onOpenProfile={() => setIsProfileOpen(true)}
+              onOpenDirectory={goToDirectory}
+              currentView="community"
+            />
+            <CommunityBoardPage onBack={goToLanding} />
           </motion.div>
         )}
       </AnimatePresence>
