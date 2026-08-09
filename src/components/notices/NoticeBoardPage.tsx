@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
 import { useNotices } from '../../hooks/useNotices';
 import { useNoticeUrl, pushNoticesView, pushHomeView } from '../../hooks/useNoticeUrl';

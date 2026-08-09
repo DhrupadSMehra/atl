@@ -75,7 +75,7 @@ export const UserBar: React.FC<UserBarProps> = ({
             Community
           </button>
         )}
-        {isAdmin && onOpenDirectory && (
+        {onOpenDirectory && (
           <button
             type="button"
             className={`user-nav-link ${currentView === 'directory' ? 'active' : ''}`}

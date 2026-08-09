@@ -303,22 +303,53 @@ router.put('/profile', verifyToken, async (req: AuthRequest, res: Response) => {
  */
 router.get('/all', verifyToken, async (req: AuthRequest, res: Response) => {
   try {
+    const isUserAdmin = req.user?.role === 'admin';
+    let isRegisteredMember = false;
+
+    if (!isUserAdmin && req.user) {
+      const member = await Member.findOne({
+        $or: [{ googleId: req.user.googleId }, { email: req.user.email.toLowerCase() }]
+      });
+      if (member && member.profileCompleted) {
+        isRegisteredMember = true;
+      }
+    }
+
+    const canSeeAllDetails = isUserAdmin || isRegisteredMember;
+
     const members = await Member.find().sort({ createdAt: -1 });
 
-    const formatted = members.map(m => ({
-      memberId: m._id.toString(),
-      googleId: m.googleId,
-      email: m.email,
-      fullName: m.fullName,
-      studentClass: m.studentClass,
-      section: m.section,
-      contactNumber: m.contactNumber,
-      department: m.department,
-      role: m.role,
-      profileCompleted: m.profileCompleted,
-      createdAt: m.createdAt,
-      updatedAt: m.updatedAt
-    }));
+    const formatted = members.map(m => {
+      if (canSeeAllDetails) {
+        return {
+          memberId: m._id.toString(),
+          googleId: m.googleId,
+          email: m.email,
+          fullName: m.fullName,
+          studentClass: m.studentClass,
+          section: m.section,
+          contactNumber: m.contactNumber,
+          department: m.department,
+          role: m.role,
+          profileCompleted: m.profileCompleted,
+          createdAt: m.createdAt,
+          updatedAt: m.updatedAt
+        };
+      } else {
+        return {
+          memberId: m._id.toString(),
+          googleId: m.googleId,
+          fullName: m.fullName,
+          department: m.department,
+          email: '',
+          studentClass: '',
+          section: '',
+          contactNumber: '',
+          role: '',
+          profileCompleted: m.profileCompleted,
+        };
+      }
+    });
 
     res.json({
       success: true,

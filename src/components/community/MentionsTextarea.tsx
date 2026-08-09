@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef, KeyboardEvent } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import type { KeyboardEvent } from 'react';
 
 interface MentionsTextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   value: string;
@@ -15,9 +16,9 @@ const API_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5174').r
 
 export const MentionsTextarea: React.FC<MentionsTextareaProps> = ({ value, onChange, className, ...props }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  
+  const [, setDropdownPosition] = useState({ top: 0, left: 0 });
   const [dropdownVisible, setDropdownVisible] = useState(false);
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+  
   const [suggestions, setSuggestions] = useState<{ id: string; label: string; type: 'user' | 'dept' }[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [activeQuery, setActiveQuery] = useState<{ text: string; startIndex: number; type: 'user' | 'dept' } | null>(null);

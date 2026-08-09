@@ -26,31 +26,35 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, compact = false 
           <h3 className="member-name">{member.fullName}</h3>
           <span className="member-dept-badge">{deptFormatted} Department</span>
         </div>
-        <span className={`member-role-pill ${member.role.toLowerCase()}`}>
-          {member.role}
-        </span>
+        {member.role && (
+          <span className={`member-role-pill ${member.role.toLowerCase()}`}>
+            {member.role}
+          </span>
+        )}
       </div>
 
-      <div className="member-details-grid">
-        <div className="member-detail-item">
-          <GraduationCap className="detail-icon" />
-          <span>Class {member.studentClass}-{member.section}</span>
-        </div>
+      {member.email && (
+        <div className="member-details-grid">
+          <div className="member-detail-item">
+            <GraduationCap className="detail-icon" />
+            <span>Class {member.studentClass}-{member.section}</span>
+          </div>
 
-        <div className="member-detail-item">
-          <Phone className="detail-icon" />
-          <a href={`tel:${member.contactNumber}`} className="detail-link">
-            {member.contactNumber}
-          </a>
-        </div>
+          <div className="member-detail-item">
+            <Phone className="detail-icon" />
+            <a href={`tel:${member.contactNumber}`} className="detail-link">
+              {member.contactNumber}
+            </a>
+          </div>
 
-        <div className="member-detail-item full-width">
-          <Mail className="detail-icon" />
-          <a href={`mailto:${member.email}`} className="detail-link">
-            {member.email}
-          </a>
+          <div className="member-detail-item full-width">
+            <Mail className="detail-icon" />
+            <a href={`mailto:${member.email}`} className="detail-link">
+              {member.email}
+            </a>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
