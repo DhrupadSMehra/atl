@@ -75,6 +75,7 @@ interface AuthContextType {
   isAdminUnlockedByPass: boolean;
   pendingGoogleAccount: { googleId: string; email: string; name: string; profilePicture?: string } | null;
   handleGoogleSuccess: (tokenPayload: { access_token?: string; credential?: string }) => Promise<void>;
+  handleLoginSuccess: (data: any) => void;
   verifyRegistrationPassword: (password: string) => Promise<{ success: boolean; error?: string }>;
   completeMemberRegistration: (payload: MemberRegistrationPayload) => Promise<void>;
   updateMemberProfile: (payload: MemberProfileUpdatePayload) => Promise<void>;
@@ -318,6 +319,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsPendingRegistration(true);
   };
 
+  const handleLoginSuccess = (data: any) => {
+    if (data.token) {
+      localStorage.setItem('atl_jwt_token', data.token);
+    }
+    setUser(data.user);
+
+    if (data.user.role === 'admin' || data.isExistingAdmin) {
+      setIsPendingRegistration(false);
+      setIsAdminUnlockedByPass(false);
+      setIsPendingAdminSetup(false);
+      setPendingGoogleAccount(null);
+      return;
+    }
+
+    if (data.hasMemberProfile && data.member) {
+      setMember(data.member);
+      setIsPendingRegistration(false);
+      setIsAdminUnlockedByPass(false);
+      setIsPendingAdminSetup(false);
+      setPendingGoogleAccount(null);
+      return;
+    }
+    
+    // For email/password registration, skip the member registration flow if they are not Google users, or we can just let them pass as viewers
+    setIsPendingRegistration(false);
+  };
+
   // Complete Member Profile Registration
   const completeMemberRegistration = async (payload: MemberRegistrationPayload) => {
     if (!pendingGoogleAccount) {
@@ -426,6 +454,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAdminUnlockedByPass,
         pendingGoogleAccount,
         handleGoogleSuccess,
+        handleLoginSuccess,
         verifyRegistrationPassword,
         completeMemberRegistration,
         updateMemberProfile,

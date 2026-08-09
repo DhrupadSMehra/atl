@@ -52,15 +52,18 @@ export const CommunityBoardPage: React.FC<CommunityBoardPageProps> = ({ onBack: 
   const handleUpvoteToggle = (postId: string, newUpvoteCount: number, _hasUpvoted: boolean) => {
     setPosts(prev => prev.map(p => {
       if (p._id === postId) {
-        // Find current user id from the hasUpvoted flag by trusting the optimistic updates in child
-        // or just updating the count
-        return {
-          ...p,
-          upvotes: newUpvoteCount
-        };
+        return { ...p, upvotes: newUpvoteCount };
       }
       return p;
     }));
+  };
+
+  const handleDeletePost = (postId: string) => {
+    setPosts(prev => prev.filter(p => p._id !== postId));
+  };
+
+  const handleBanUser = (bannedUserId: string) => {
+    setPosts(prev => prev.filter(p => p.author?._id !== bannedUserId && p.author !== bannedUserId));
   };
 
   return (
@@ -103,6 +106,8 @@ export const CommunityBoardPage: React.FC<CommunityBoardPageProps> = ({ onBack: 
                   post={post} 
                   onClick={() => setActivePostId(post._id)} 
                   onUpvoteToggle={handleUpvoteToggle}
+                  onDeletePost={handleDeletePost}
+                  onBanUser={handleBanUser}
                 />
               </motion.div>
             ))
@@ -122,6 +127,8 @@ export const CommunityBoardPage: React.FC<CommunityBoardPageProps> = ({ onBack: 
           postId={activePostId} 
           onClose={() => setActivePostId(null)} 
           onUpvoteToggle={handleUpvoteToggle}
+          onDeletePost={handleDeletePost}
+          onBanUser={handleBanUser}
         />
       )}
     </div>

@@ -22,6 +22,33 @@ const upload = multer({
   },
 });
 
+// Search users for mentions
+router.get('/users/search', verifyToken, async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const q = req.query.q as string;
+    
+    // Import User model
+    const { User } = require('../models/User');
+    
+    let filter: any = { isBanned: { $ne: true } };
+    if (q) {
+      filter.$or = [
+        { name: { $regex: new RegExp(q, 'i') } },
+        { 'adminProfile.displayName': { $regex: new RegExp(q, 'i') } }
+      ];
+    }
+    
+    const users = await User.find(filter).select('name adminProfile _id').limit(10);
+    
+    res.json({ success: true, users: users.map((u: any) => ({ 
+      id: u._id, 
+      name: u.adminProfile?.displayName || u.name 
+    }))});
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // Get all posts
 router.get('/posts', verifyToken, async (req: AuthRequest, res: Response) => {
   try {
@@ -198,6 +225,30 @@ router.patch('/comments/:id/upvote', verifyToken, async (req: AuthRequest, res: 
 
     await comment.save();
     res.json({ success: true, comment });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Delete a post (Admin only)
+router.delete('/posts/:id', verifyToken, async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    if (req.user?.role !== 'admin') {
+      res.status(403).json({ success: false, error: 'Only administrators can delete posts.' });
+      return;
+    }
+
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      res.status(404).json({ success: false, error: 'Post not found' });
+      return;
+    }
+
+    // Delete the post and its comments
+    await Post.findByIdAndDelete(req.params.id);
+    await Comment.deleteMany({ post: req.params.id });
+
+    res.json({ success: true, message: 'Post deleted successfully.' });
   } catch (err: any) {
     res.status(500).json({ success: false, error: err.message });
   }

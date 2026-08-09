@@ -2,9 +2,13 @@ import { Router, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
 import dotenv from 'dotenv';
+import bcrypt from 'bcryptjs';
 import { User, IUser, AdminPosition } from '../models/User';
 import { Member } from '../models/Member';
+import { Post } from '../models/Post';
+import { Comment } from '../models/Comment';
 import { verifyToken, AuthRequest } from '../middleware/auth';
+import mongoose from 'mongoose';
 
 dotenv.config();
 
@@ -16,48 +20,37 @@ const getGoogleClientId = () => process.env.VITE_GOOGLE_CLIENT_ID || process.env
 const googleClient = new OAuth2Client(getGoogleClientId());
 
 // Helper to sign JWT
-const generateToken = (user: { id: string; googleId: string; email: string; name: string; role: 'viewer' | 'admin' }) => {
+const generateToken = (user: { id: string; googleId?: string; email: string; name: string; role: 'viewer' | 'admin' }) => {
   return jwt.sign(user, getJwtSecret(), { expiresIn: '7d' });
 };
 
 /**
  * 1. Verify Admin Password (SERVER-SIDE ONLY)
- * POST /api/auth/verify-admin-pass
- * Body: { password: string }
  */
 router.post('/verify-admin-pass', (req: Request, res: Response) => {
-  console.log('[Auth Route] Received POST /api/auth/verify-admin-pass request');
   const { password } = req.body;
   const adminPassword = process.env.ADMIN_ACCESS_PASSWORD;
 
   if (!adminPassword) {
-    console.error('[Auth Error] ADMIN_ACCESS_PASSWORD is not defined in process.env');
     res.status(500).json({ success: false, error: 'Server configuration error.' });
     return;
   }
 
   if (!password || String(password).trim() !== String(adminPassword).trim()) {
-    console.warn('[Auth Route] Admin password verification failed - incorrect password');
     res.status(400).json({ success: false, error: 'Incorrect administrator password.' });
     return;
   }
-
-  console.log('✓ Admin password verified successfully server-side');
   res.json({ success: true, message: 'Password verified successfully.' });
 });
 
 /**
  * 2. Google OAuth Token Verification & Authentication
- * POST /api/auth/google
- * Body: { credential?: string; access_token?: string }
  */
-router.post('/google', async (req: Request, res: Response) => {
-  console.log('[Auth Route] Received POST /api/auth/google request');
+router.post('/google', async (req: Request, res: Response): Promise<void> => {
   try {
     const { credential, access_token } = req.body;
 
     if (!credential && !access_token) {
-      console.warn('[Auth Route] Missing credential or access_token in request body');
       res.status(400).json({ success: false, error: 'Google authentication token is required.' });
       return;
     }
@@ -67,9 +60,7 @@ router.post('/google', async (req: Request, res: Response) => {
     let name = '';
     let profilePicture = '';
 
-    // Verify Google Token (ID Token or Access Token)
     if (credential) {
-      console.log('[Auth Route] Verifying Google ID Token (credential)...');
       const ticket = await googleClient.verifyIdToken({
         idToken: credential,
         audience: getGoogleClientId(),
@@ -84,10 +75,8 @@ router.post('/google', async (req: Request, res: Response) => {
       name = payload.name || payload.given_name || 'ATL Member';
       profilePicture = payload.picture || '';
     } else if (access_token) {
-      console.log('[Auth Route] Verifying Google Access Token via UserInfo API...');
       const googleRes = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${access_token}`);
       if (!googleRes.ok) {
-        console.warn(`[Auth Route] Google UserInfo API returned ${googleRes.status}`);
         res.status(401).json({ success: false, error: 'Failed to verify Google access token.' });
         return;
       }
@@ -102,11 +91,13 @@ router.post('/google', async (req: Request, res: Response) => {
       profilePicture = payload.picture || '';
     }
 
-    console.log(`✓ Google Token Verified for Email: ${email}`);
-
-    // Lookup user and member in MongoDB
     let user = await User.findOne({ $or: [{ googleId }, { email }] });
     const memberDoc = await Member.findOne({ $or: [{ googleId }, { email }] });
+
+    if (user?.isBanned) {
+      res.status(403).json({ success: false, error: 'Your account has been banned by a moderator.' });
+      return;
+    }
 
     const memberData = memberDoc && memberDoc.profileCompleted ? {
       memberId: memberDoc._id.toString(),
@@ -124,7 +115,12 @@ router.post('/google', async (req: Request, res: Response) => {
     } : null;
 
     if (user) {
-      console.log(`✓ User found in MongoDB. Role: ${user.role}`);
+      // If user signed up via email but now uses Google, we can link the googleId
+      if (!user.googleId) {
+        user.googleId = googleId;
+        await user.save();
+      }
+
       const token = generateToken({
         id: user._id.toString(),
         googleId: user.googleId,
@@ -152,8 +148,6 @@ router.post('/google', async (req: Request, res: Response) => {
       return;
     }
 
-    // New user — create default viewer account in MongoDB
-    console.log(`[Auth Route] User not found in MongoDB. Creating new viewer user for ${email}...`);
     const newUser = await User.create({
       googleId,
       email,
@@ -187,64 +181,108 @@ router.post('/google', async (req: Request, res: Response) => {
     });
 
   } catch (error: any) {
-    console.error('[Auth API Google Error]', error);
     res.status(500).json({ success: false, error: error.message || 'Google token verification failed.' });
   }
 });
 
 /**
- * 3. First Time Admin Setup
- * POST /api/auth/admin-setup
- * Body: { googleId, email, name, profilePicture, displayName, position }
+ * 3. Email & Password Registration (Normal & Backend Team)
  */
-router.post('/admin-setup', async (req: Request, res: Response) => {
-  console.log('[Auth Route] Received POST /api/auth/admin-setup request');
+router.post('/register', async (req: Request, res: Response): Promise<void> => {
   try {
-    const { googleId, email, name, profilePicture, displayName, position } = req.body;
-
-    const validPositions: AdminPosition[] = [
-      'President', 'Vice President', 'Head', 'Coordinator', 'Faculty', 'Teacher', 'Mentor'
-    ];
-
-    if (!displayName || !position || !validPositions.includes(position)) {
-      res.status(400).json({ 
-        success: false, 
-        error: 'Invalid profile details. Position must be one of the specified leadership options.' 
-      });
+    const { email, name, password, adminPassword } = req.body;
+    if (!email || !name || !password) {
+      res.status(400).json({ success: false, error: 'Email, name, and password are required.' });
       return;
     }
 
-    const adminProfileData = {
-      displayName: displayName.trim(),
-      position: position as AdminPosition,
-      createdAt: new Date()
-    };
-
-    let user = await User.findOne({ $or: [{ googleId }, { email: email.toLowerCase() }] });
-
-    if (user) {
-      user.role = 'admin';
-      user.adminProfile = adminProfileData;
-      await user.save();
-    } else {
-      user = await User.create({
-        googleId: googleId || `google_${Date.now()}`,
-        email: email.toLowerCase(),
-        name: name || displayName,
-        profilePicture: profilePicture || '',
-        role: 'admin',
-        adminProfile: adminProfileData
-      });
+    const existingUser = await User.findOne({ email: email.toLowerCase() });
+    if (existingUser) {
+      res.status(400).json({ success: false, error: 'User with this email already exists.' });
+      return;
     }
 
-    console.log(`✓ Admin profile saved in MongoDB for ${user.email}. Role set to admin.`);
+    let role: 'viewer' | 'admin' = 'viewer';
+    
+    // Check if they provided backend team password to become admin
+    if (adminPassword) {
+      const serverAdminPassword = process.env.ADMIN_ACCESS_PASSWORD;
+      if (adminPassword === serverAdminPassword) {
+        role = 'admin';
+      } else {
+        res.status(400).json({ success: false, error: 'Invalid backend team password.' });
+        return;
+      }
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    const newUser = await User.create({
+      email: email.toLowerCase(),
+      name,
+      passwordHash,
+      role
+    });
+
+    const token = generateToken({
+      id: newUser._id.toString(),
+      email: newUser.email,
+      name: newUser.name,
+      role: newUser.role
+    });
+
+    res.json({
+      success: true,
+      token,
+      user: {
+        id: newUser._id.toString(),
+        email: newUser.email,
+        name: newUser.name,
+        role: newUser.role
+      },
+      isExistingAdmin: role === 'admin',
+      hasMemberProfile: false
+    });
+
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+/**
+ * 4. Email & Password Login
+ */
+router.post('/login', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      res.status(400).json({ success: false, error: 'Email and password are required.' });
+      return;
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user || !user.passwordHash) {
+      res.status(401).json({ success: false, error: 'Invalid email or password.' });
+      return;
+    }
+
+    if (user.isBanned) {
+      res.status(403).json({ success: false, error: 'Your account has been banned by a moderator.' });
+      return;
+    }
+
+    const isMatch = await bcrypt.compare(password, user.passwordHash);
+    if (!isMatch) {
+      res.status(401).json({ success: false, error: 'Invalid email or password.' });
+      return;
+    }
 
     const token = generateToken({
       id: user._id.toString(),
       googleId: user.googleId,
       email: user.email,
       name: user.name,
-      role: 'admin'
+      role: user.role
     });
 
     res.json({
@@ -252,42 +290,13 @@ router.post('/admin-setup', async (req: Request, res: Response) => {
       token,
       user: {
         id: user._id.toString(),
-        googleId: user.googleId,
         email: user.email,
         name: user.name,
-        profilePicture: user.profilePicture,
-        role: 'admin',
+        role: user.role,
         adminProfile: user.adminProfile
-      }
-    });
-
-  } catch (error: any) {
-    console.error('[Auth API Admin Setup Error]', error);
-    res.status(500).json({ success: false, error: error.message || 'Failed to complete admin setup.' });
-  }
-});
-
-/**
- * 4. Skip / Viewer Guest Sign-in
- * POST /api/auth/viewer-guest
- */
-router.post('/viewer-guest', async (_req: Request, res: Response) => {
-  console.log('[Auth Route] Received POST /api/auth/viewer-guest request');
-  try {
-    const guestUser = {
-      id: `viewer_${Date.now()}`,
-      googleId: `guest_${Date.now()}`,
-      email: 'guest@atl.community',
-      name: 'ATL Visitor',
-      role: 'viewer' as const
-    };
-
-    const token = generateToken(guestUser);
-
-    res.json({
-      success: true,
-      token,
-      user: guestUser
+      },
+      isExistingAdmin: user.role === 'admin',
+      hasMemberProfile: false // simplified for normal login
     });
   } catch (error: any) {
     res.status(500).json({ success: false, error: error.message });
@@ -296,17 +305,24 @@ router.post('/viewer-guest', async (_req: Request, res: Response) => {
 
 /**
  * 5. Get Active Session User
- * GET /api/auth/me
  */
-router.get('/me', verifyToken, async (req: AuthRequest, res: Response) => {
-  console.log('[Auth Route] Received GET /api/auth/me request');
+router.get('/me', verifyToken, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     if (!req.user) {
       res.status(401).json({ success: false, error: 'Unauthorized.' });
       return;
     }
 
-    const dbUser = await User.findOne({ googleId: req.user.googleId });
+    // Lookup by _id if available, fallback to email
+    const dbUser = req.user.id 
+      ? await User.findById(req.user.id) 
+      : await User.findOne({ email: req.user.email.toLowerCase() });
+
+    if (dbUser?.isBanned) {
+      res.status(403).json({ success: false, error: 'Your account has been banned by a moderator.' });
+      return;
+    }
+
     const memberDoc = await Member.findOne({
       $or: [{ googleId: req.user.googleId }, { email: req.user.email.toLowerCase() }]
     });
@@ -349,6 +365,103 @@ router.get('/me', verifyToken, async (req: AuthRequest, res: Response) => {
       user: req.user,
       member: memberData,
       hasMemberProfile: !!memberData
+    });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+/**
+ * 6. Admin Ban User endpoint
+ * PATCH /api/auth/users/:id/ban
+ */
+router.patch('/users/:id/ban', verifyToken, async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    if (req.user?.role !== 'admin') {
+      res.status(403).json({ success: false, error: 'Only administrators can ban accounts.' });
+      return;
+    }
+
+    const targetUserId = req.params.id;
+    const targetUser = await User.findById(targetUserId);
+    if (!targetUser) {
+      res.status(404).json({ success: false, error: 'User not found.' });
+      return;
+    }
+
+    if (targetUser.role === 'admin') {
+      res.status(400).json({ success: false, error: 'Cannot ban another administrator.' });
+      return;
+    }
+
+    targetUser.isBanned = true;
+    await targetUser.save();
+
+    // Delete all their posts
+    await Post.deleteMany({ author: targetUserId });
+    // Delete all their comments
+    await Comment.deleteMany({ author: targetUserId });
+
+    res.json({ success: true, message: 'User banned and all content removed.' });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * 7. Admin Setup
+ */
+router.post('/admin-setup', verifyToken, async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { displayName, fullName, position } = req.body;
+    const nameToUse = displayName || fullName;
+    
+    if (!nameToUse || !position) {
+      res.status(400).json({ success: false, error: 'Full name and position are required.' });
+      return;
+    }
+
+    if (!req.user || !req.user.googleId) {
+      res.status(401).json({ success: false, error: 'Unauthorized.' });
+      return;
+    }
+
+    const user = await User.findOne({ googleId: req.user.googleId });
+    if (!user) {
+      res.status(404).json({ success: false, error: 'User not found.' });
+      return;
+    }
+
+    user.role = 'admin';
+    user.adminProfile = {
+      displayName: nameToUse,
+      position: position as AdminPosition,
+      createdAt: new Date()
+    };
+
+    await user.save();
+
+    // Generate a fresh token with admin role
+    const token = generateToken({
+      id: user._id.toString(),
+      googleId: user.googleId,
+      email: user.email,
+      name: user.name,
+      role: 'admin'
+    });
+
+    res.json({
+      success: true,
+      token,
+      user: {
+        id: user._id.toString(),
+        googleId: user.googleId,
+        email: user.email,
+        name: user.name,
+        profilePicture: user.profilePicture,
+        role: 'admin',
+        adminProfile: user.adminProfile
+      }
     });
   } catch (error: any) {
     res.status(500).json({ success: false, error: error.message });

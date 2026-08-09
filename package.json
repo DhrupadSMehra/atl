@@ -25,6 +25,7 @@
     "@tiptap/react": "^3.29.2",
     "@tiptap/starter-kit": "^3.29.2",
     "@types/three": "^0.184.1",
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dompurify": "^3.4.13",
     "dotenv": "^17.4.2",
@@ -42,6 +43,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.19",
     "@types/dompurify": "^3.0.5",
     "@types/express": "^5.0.6",

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { MessageSquare, ArrowBigUp, Image as ImageIcon } from 'lucide-react';
+import { MessageSquare, ArrowBigUp, Image as ImageIcon, Trash2, Ban } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { renderTextWithTags } from '../../utils/textFormatting';
 
 const API_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5174').replace(/\/+$/, '');
 
@@ -8,11 +9,14 @@ interface PostCardProps {
   post: any;
   onClick: () => void;
   onUpvoteToggle: (postId: string, newUpvoteCount: number, hasUpvoted: boolean) => void;
+  onDeletePost?: (postId: string) => void;
+  onBanUser?: (userId: string) => void;
 }
 
-export const PostCard: React.FC<PostCardProps> = ({ post, onClick, onUpvoteToggle }) => {
+export const PostCard: React.FC<PostCardProps> = ({ post, onClick, onUpvoteToggle, onDeletePost, onBanUser }) => {
   const { user } = useAuth();
   const userId = user?.id;
+  const isAdmin = user?.role === 'admin';
   
   const initialHasUpvoted = userId ? post.upvotedBy?.includes(userId) : false;
   
@@ -54,6 +58,43 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onClick, onUpvoteToggl
     }
   };
 
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!isAdmin || !window.confirm('Delete this post?')) return;
+    
+    try {
+      const token = localStorage.getItem('atl_jwt_token');
+      const res = await fetch(`${API_URL}/api/community/posts/${post._id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        onDeletePost?.(post._id);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleBan = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const authorId = post.author?._id;
+    if (!isAdmin || !authorId || !window.confirm('Ban this user and delete all their posts?')) return;
+    
+    try {
+      const token = localStorage.getItem('atl_jwt_token');
+      const res = await fetch(`${API_URL}/api/auth/users/${authorId}/ban`, {
+        method: 'PATCH',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        onBanUser?.(authorId);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const formattedDate = new Date(post.createdAt).toLocaleDateString(undefined, {
     year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
   });
@@ -79,10 +120,21 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onClick, onUpvoteToggl
           <span className="post-author">{post.author?.name || 'Unknown User'}</span>
           <span>•</span>
           <span>{formattedDate}</span>
+          
+          {isAdmin && (
+            <div className="admin-actions" style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
+              <button className="admin-action-btn ban-btn" onClick={handleBan} title="Ban User" style={{ color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <Ban size={14} /> Ban
+              </button>
+              <button className="admin-action-btn delete-btn" onClick={handleDelete} title="Delete Post" style={{ color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <Trash2 size={14} /> Delete
+              </button>
+            </div>
+          )}
         </div>
         
-        <h3 className="post-title">{post.title}</h3>
-        <p className="post-preview">{post.content}</p>
+        <h3 className="post-title">{renderTextWithTags(post.title)}</h3>
+        <p className="post-preview">{renderTextWithTags(post.content)}</p>
 
         {/* Image thumbnail strip */}
         {hasImages && (

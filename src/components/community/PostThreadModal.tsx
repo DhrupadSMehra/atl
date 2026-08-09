@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { X, ArrowBigUp, MessageSquare, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, ArrowBigUp, MessageSquare, ChevronLeft, ChevronRight, Trash2, Ban } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { renderTextWithTags } from '../../utils/textFormatting';
+import { MentionsTextarea } from './MentionsTextarea';
 
 const API_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5174').replace(/\/+$/, '');
 
@@ -8,11 +10,14 @@ interface PostThreadModalProps {
   postId: string;
   onClose: () => void;
   onUpvoteToggle: (postId: string, newUpvoteCount: number, hasUpvoted: boolean) => void;
+  onDeletePost?: (postId: string) => void;
+  onBanUser?: (userId: string) => void;
 }
 
-export const PostThreadModal: React.FC<PostThreadModalProps> = ({ postId, onClose, onUpvoteToggle }) => {
+export const PostThreadModal: React.FC<PostThreadModalProps> = ({ postId, onClose, onUpvoteToggle, onDeletePost, onBanUser }) => {
   const { user } = useAuth();
   const userId = user?.id;
+  const isAdmin = user?.role === 'admin';
   const [post, setPost] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,7 +52,6 @@ export const PostThreadModal: React.FC<PostThreadModalProps> = ({ postId, onClos
     fetchPost();
   }, [postId]);
 
-  // Lock body scroll when thread is open
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = ''; };
@@ -151,9 +155,50 @@ export const PostThreadModal: React.FC<PostThreadModalProps> = ({ postId, onClos
     }
   };
 
+  const handleDelete = async () => {
+    if (!isAdmin || !window.confirm('Delete this post?')) return;
+    try {
+      const token = localStorage.getItem('atl_jwt_token');
+      const res = await fetch(`${API_URL}/api/community/posts/${post._id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        onDeletePost?.(post._id);
+        onClose();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleBan = async (targetAuthorId: string) => {
+    if (!isAdmin || !window.confirm('Ban this user and delete all their posts?')) return;
+    try {
+      const token = localStorage.getItem('atl_jwt_token');
+      const res = await fetch(`${API_URL}/api/auth/users/${targetAuthorId}/ban`, {
+        method: 'PATCH',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        onBanUser?.(targetAuthorId);
+        if (post.author?._id === targetAuthorId) {
+          onClose(); // Close if we banned the OP
+        } else {
+          // If we banned a commenter, filter comments locally
+          setPost({
+            ...post,
+            comments: post.comments.filter((c: any) => c.author?._id !== targetAuthorId && c.author !== targetAuthorId)
+          });
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const resolveImgSrc = (img: string) => img.startsWith('http') ? img : `${API_URL}${img}`;
 
-  // Lightbox navigation
   const openLightbox = (index: number) => setLightboxIndex(index);
   const closeLightbox = () => setLightboxIndex(null);
   const prevImage = (e: React.MouseEvent) => {
@@ -199,19 +244,26 @@ export const PostThreadModal: React.FC<PostThreadModalProps> = ({ postId, onClos
 
   return (
     <>
-      {/* Full-page thread overlay — Reddit style */}
       <div className="thread-overlay" onClick={onClose}>
         <div className="thread-panel" onClick={e => e.stopPropagation()}>
-          {/* Sticky close bar */}
           <div className="thread-close-bar">
             <button className="thread-back-btn" onClick={onClose}>
               <X size={18} />
               <span>Close</span>
             </button>
+            {isAdmin && (
+              <div style={{ marginLeft: 'auto', display: 'flex', gap: '16px' }}>
+                <button className="admin-action-btn" onClick={() => handleBan(post.author?._id)} style={{ color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <Ban size={16} /> Ban OP
+                </button>
+                <button className="admin-action-btn" onClick={handleDelete} style={{ color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <Trash2 size={16} /> Delete Post
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="thread-scroll-area">
-            {/* ── Original Post ── */}
             <div className="thread-op">
               <div className="thread-op-vote">
                 <button 
@@ -232,16 +284,14 @@ export const PostThreadModal: React.FC<PostThreadModalProps> = ({ postId, onClos
                   <span>•</span>
                   <span>{formattedDate}</span>
                 </div>
-                <h1 className="thread-op-title">{post.title}</h1>
+                <h1 className="thread-op-title">{renderTextWithTags(post.title)}</h1>
 
-                {/* Post text content */}
                 <div className="thread-op-text">
                   {post.content.split('\n').map((paragraph: string, i: number) => (
-                    <p key={i} style={{ minHeight: paragraph ? 'auto' : '1em' }}>{paragraph}</p>
+                    <p key={i} style={{ minHeight: paragraph ? 'auto' : '1em' }}>{renderTextWithTags(paragraph)}</p>
                   ))}
                 </div>
 
-                {/* Post images */}
                 {hasImages && (
                   <div className={`thread-image-gallery ${post.images.length === 1 ? 'single' : ''}`}>
                     {post.images.map((img: string, i: number) => (
@@ -269,13 +319,12 @@ export const PostThreadModal: React.FC<PostThreadModalProps> = ({ postId, onClos
               </div>
             </div>
 
-            {/* ── Comment Form ── */}
             <div className="thread-comment-form">
               <div className="thread-comment-form-label">Comment as <strong>{user?.name || 'Guest'}</strong></div>
               <form onSubmit={handleSubmitComment}>
-                <textarea
+                <MentionsTextarea
                   className="comment-input"
-                  placeholder="What are your thoughts?"
+                  placeholder="What are your thoughts? Use @ to mention someone or # for a department."
                   value={commentContent}
                   onChange={e => setCommentContent(e.target.value)}
                   required
@@ -290,7 +339,6 @@ export const PostThreadModal: React.FC<PostThreadModalProps> = ({ postId, onClos
               </form>
             </div>
 
-            {/* ── Comments ── */}
             <div className="thread-comments">
               {post.comments?.length === 0 ? (
                 <div className="thread-no-comments">No comments yet. Be the first to share your thoughts.</div>
@@ -305,8 +353,18 @@ export const PostThreadModal: React.FC<PostThreadModalProps> = ({ postId, onClos
                           <span className="post-author">{comment.author?.name || 'Unknown User'}</span>
                           <span>•</span>
                           <span>{new Date(comment.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
+                          
+                          {isAdmin && (
+                            <button className="admin-action-btn" onClick={() => handleBan(comment.author?._id)} title="Ban Commenter" style={{ marginLeft: '12px', color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              <Ban size={12} /> Ban
+                            </button>
+                          )}
                         </div>
-                        <div className="comment-text">{comment.content}</div>
+                        <div className="comment-text">
+                           {comment.content.split('\n').map((paragraph: string, i: number) => (
+                             <p key={i} style={{ margin: 0, minHeight: paragraph ? 'auto' : '1em' }}>{renderTextWithTags(paragraph)}</p>
+                           ))}
+                        </div>
                         <div className="thread-comment-actions">
                           <button 
                             className={`upvote-btn-inline ${commentHasUpvoted ? 'upvoted' : ''}`} 
@@ -326,7 +384,6 @@ export const PostThreadModal: React.FC<PostThreadModalProps> = ({ postId, onClos
         </div>
       </div>
 
-      {/* ── Image Lightbox ── */}
       {lightboxIndex !== null && post.images && (
         <div className="lightbox-overlay" onClick={closeLightbox}>
           <button className="lightbox-close" onClick={closeLightbox}><X size={24} /></button>

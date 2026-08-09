@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { X, ImagePlus, Trash2 } from 'lucide-react';
+import { MentionsTextarea } from './MentionsTextarea';
 
 interface CreatePostFormProps {
   onClose: () => void;
@@ -113,10 +114,10 @@ export const CreatePostForm: React.FC<CreatePostFormProps> = ({ onClose, onPostC
             </div>
             <div className="form-group">
               <label className="form-label" htmlFor="post-content">Content</label>
-              <textarea
+              <MentionsTextarea
                 id="post-content"
                 className="form-textarea"
-                placeholder="What are your thoughts?"
+                placeholder="What are your thoughts? Use @ to tag users and # for departments."
                 value={content}
                 onChange={e => setContent(e.target.value)}
                 required
