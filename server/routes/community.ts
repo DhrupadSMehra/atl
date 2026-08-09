@@ -27,22 +27,18 @@ router.get('/users/search', verifyToken, async (req: AuthRequest, res: Response)
   try {
     const q = req.query.q as string;
     
-    // Import User model
-    const { User } = require('../models/User');
+    const { Member } = require('../models/Member');
     
-    let filter: any = { isBanned: { $ne: true } };
+    let filter: any = {};
     if (q) {
-      filter.$or = [
-        { name: { $regex: new RegExp(q, 'i') } },
-        { 'adminProfile.displayName': { $regex: new RegExp(q, 'i') } }
-      ];
+      filter.fullName = { $regex: new RegExp(q, 'i') };
     }
     
-    const users = await User.find(filter).select('name adminProfile _id').limit(10);
+    const members = await Member.find(filter).select('fullName _id').limit(10);
     
-    res.json({ success: true, users: users.map((u: any) => ({ 
-      id: u._id, 
-      name: u.adminProfile?.displayName || u.name 
+    res.json({ success: true, users: members.map((m: any) => ({ 
+      id: m._id, 
+      name: m.fullName 
     }))});
   } catch (err: any) {
     res.status(500).json({ success: false, error: err.message });
