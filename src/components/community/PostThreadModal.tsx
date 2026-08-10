@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { renderTextWithTags } from '../../utils/textFormatting';
 import { MentionsTextarea } from './MentionsTextarea';
 
-const API_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5174').replace(/\/+$/, '');
+const API_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5175').replace(/\/+$/, '');
 
 interface PostThreadModalProps {
   postId: string;

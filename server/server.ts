@@ -12,7 +12,7 @@ import communityRoutes from './routes/community';
 dotenv.config();
 
 const app = express();
-const PORT = Number(process.env.PORT) || 5000;
+const PORT = Number(process.env.PORT) || 5175;
 
 // CORS setup
 app.use(cors({
@@ -108,7 +108,7 @@ const startServer = async () => {
   console.log('  └─ POST   /api/notices/:id/duplicate');
   console.log('✓ Static Uploads served at /uploads');
 
-  app.listen(PORT, () => {
+  app.listen(PORT, '0.0.0.0', () => {
     console.log(`✓ Server Listening on http://localhost:${PORT}`);
     console.log('==================================================');
   });

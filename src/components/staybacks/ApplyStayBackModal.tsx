@@ -83,7 +83,7 @@ Contact Number: ${member.contactNumber || '[Phone Number]'}`;
 
     try {
       const token = localStorage.getItem('atl_jwt_token');
-      const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000').replace(/\/+$/, '');
+      const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5175').replace(/\/+$/, '');
 
       const res = await fetch(`${API_BASE_URL}/api/staybacks/${stayBack.id}/apply`, {
         method: 'POST',

@@ -5,7 +5,7 @@ import type { StayBackCardData } from './StayBackCard';
 import { MemberCard } from '../auth/AdminMemberDirectory';
 import './staybacks.css';
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000').replace(/\/+$/, '');
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5175').replace(/\/+$/, '');
 
 interface AdminStayBackOverlayProps {
   isOpen: boolean;

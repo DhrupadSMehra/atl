@@ -4,7 +4,7 @@ import type { IMemberProfile } from '../../context/AuthContext';
 import { Search, Filter, Mail, Phone, GraduationCap, ArrowLeft, RefreshCw } from 'lucide-react';
 import './auth.css';
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000').replace(/\/+$/, '');
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5175').replace(/\/+$/, '');
 
 export interface MemberCardProps {
   member: IMemberProfile;

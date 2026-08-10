@@ -90,7 +90,7 @@ export const CreateStayBackModal: React.FC<CreateStayBackModalProps> = ({
     setLoading(true);
     try {
       const token = localStorage.getItem('atl_jwt_token');
-      const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000').replace(/\/+$/, '');
+      const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5175').replace(/\/+$/, '');
 
       const payload = {
         title: title.trim(),

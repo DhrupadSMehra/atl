@@ -12,7 +12,7 @@ const DEPARTMENTS = [
   'Technical', 'Creative', 'Photography', 'SocialMedia', 'Marketing', 'Hospitality'
 ];
 
-const API_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5174').replace(/\/+$/, '');
+const API_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5175').replace(/\/+$/, '');
 
 export const MentionsTextarea: React.FC<MentionsTextareaProps> = ({ value, onChange, className, ...props }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);

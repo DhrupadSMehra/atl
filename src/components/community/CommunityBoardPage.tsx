@@ -22,7 +22,7 @@ export const CommunityBoardPage: React.FC<CommunityBoardPageProps> = ({ onBack: 
     setLoading(true);
     try {
       const token = localStorage.getItem('atl_jwt_token');
-      const API_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5174').replace(/\/+$/, '');
+      const API_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5175').replace(/\/+$/, '');
       const res = await fetch(`${API_URL}/api/community/posts`, {
         headers: {
           'Authorization': `Bearer ${token}`

@@ -10,7 +10,7 @@ import AdminStayBackOverlay from './AdminStayBackOverlay';
 import CreateStayBackModal from './CreateStayBackModal';
 import './staybacks.css';
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000').replace(/\/+$/, '');
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5175').replace(/\/+$/, '');
 
 export const StayBackPage: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
   const { member, role } = useAuth();

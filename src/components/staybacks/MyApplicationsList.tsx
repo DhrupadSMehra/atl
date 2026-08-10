@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Calendar, Clock, CheckCircle2, XCircle, Clock3, AlertTriangle, RefreshCw, MailCheck } from 'lucide-react';
 import './staybacks.css';
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000').replace(/\/+$/, '');
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5175').replace(/\/+$/, '');
 
 export interface MemberApplicationItem {
   applicationId: string;

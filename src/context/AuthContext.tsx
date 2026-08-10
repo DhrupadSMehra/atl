@@ -88,7 +88,7 @@ interface AuthContextType {
   closeAdminModal: () => void;
 }
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000').replace(/\/+$/, '');
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5175').replace(/\/+$/, '');
 
 async function safeFetchJson(endpoint: string, options: RequestInit = {}) {
   const token = localStorage.getItem('atl_jwt_token');

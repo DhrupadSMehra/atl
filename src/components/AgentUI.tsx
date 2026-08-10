@@ -315,7 +315,7 @@ export default function AgentUI({ onBack }: AgentUIProps) {
           <div className="hud-floating-marker left-bottom-marker">
             <span className="hud-marker-label">TACTICAL CLASS</span>
             <span className="hud-marker-value">
-              {mode === 'reality' ? "LEADERSHIP" : "OPERATIVE"}
+              {mode === 'reality' ? currentMember.position.toUpperCase() : "OPERATIVE"}
             </span>
           </div>
 
@@ -469,7 +469,7 @@ export default function AgentUI({ onBack }: AgentUIProps) {
                 <>
                   <div className="info-section grid-section-hud">
                     <div className="hud-data-item">
-                      <span className="hud-data-label">Tactical Class</span>
+                      <span className="hud-data-label">Role / Position</span>
                       <span className="hud-data-value">{currentMember.position}</span>
                     </div>
                     <div className="hud-data-item">

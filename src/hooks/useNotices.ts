@@ -9,7 +9,7 @@ import type {
 
 // ─── API base ──────────────────────────────────────────────────────────────────
 
-const API = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000').replace(/\/+$/, '');
+const API = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5175').replace(/\/+$/, '');
 
 function token(): string {
   return localStorage.getItem('atl_jwt_token') || '';

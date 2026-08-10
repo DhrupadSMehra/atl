@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import { AdminPasswordModal } from './AdminPasswordModal';
 import './auth.css';
 
-const API_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5174').replace(/\/+$/, '');
+const API_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5175').replace(/\/+$/, '');
 
 export const LoginPage: React.FC = () => {
   const { handleGoogleSuccess, handleLoginSuccess, openAdminModal } = useAuth();

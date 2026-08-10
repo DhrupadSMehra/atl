@@ -94,7 +94,7 @@ const NoticeBoardPage: React.FC<NoticeBoardPageProps> = ({ onBack }) => {
       if (found) {
         setSelectedNotice(found);
       } else {
-        const apiBase = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000').replace(/\/+$/, '');
+        const apiBase = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5175').replace(/\/+$/, '');
         fetch(`${apiBase}/api/notices/${id}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('atl_jwt_token') || ''}` }
         })
