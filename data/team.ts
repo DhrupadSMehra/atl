@@ -221,7 +221,7 @@ export const teamData: TeamMember[] = [
     ],
     codename: "PRISM",
     agentName: 'USHIKA // "PRISM-05"',
-    agentPhoto: "/members/agents/ushikaagent.jpeg",
+    agentPhoto: "/members/agents/ushikaagent.png",
     designation: "Cognitive Visual Architect",
     specialization: "Holographic Graphics Synthesis & Perceptual Narrative Engineering",
     secondaryCapabilities: ["Photonic Spectrum Distortion", "Holographic Vector Generation", "Narrative Matrix Mapping", "High-Resolution Render Injection"],

@@ -83,7 +83,6 @@ export const UserBar: React.FC<UserBarProps> = ({
             id="nav-directory-btn"
             title="ATL Member Roster"
           >
-            <Users className="w-3.5 h-3.5 inline mr-1 text-zinc-300" strokeWidth={2} />
             Members
           </button>
         )}
