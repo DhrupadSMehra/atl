@@ -1286,3 +1286,37 @@
     grid-template-columns: 1fr;
   }
 }
+
+.landing-db-expand-wrapper {
+  margin-bottom: 24px;
+}
+
+.landing-db-expand-btn {
+  background: transparent;
+  border: none;
+  color: #00ff66;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 12px;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.landing-db-expand-btn:hover {
+  opacity: 1;
+}
+
+.landing-db-expanded-content {
+  overflow: hidden;
+}
+
+.landing-db-expanded-content .landing-db-field-value {
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  margin-bottom: 0;
+}

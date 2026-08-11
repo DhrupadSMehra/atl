@@ -8,6 +8,7 @@ interface DivisionalMatrixProps {
 
 export default function DivisionalMatrix({ onClose }: DivisionalMatrixProps) {
   const [active, setActive] = useState(departmentsData[0].id);
+  const [isExpanded, setIsExpanded] = useState(false);
   const dept = departmentsData.find(d => d.id === active)!;
 
   return (
@@ -48,7 +49,10 @@ export default function DivisionalMatrix({ onClose }: DivisionalMatrixProps) {
               <button
                 key={d.id}
                 className={`matrix-sidebar-btn ${active === d.id ? 'active' : ''}`}
-                onClick={() => setActive(d.id)}
+                onClick={() => {
+                  setActive(d.id);
+                  setIsExpanded(false);
+                }}
               >
                 <div className="matrix-sidebar-desig">{d.designation}</div>
                 <div className="matrix-sidebar-name">{d.codename}</div>
@@ -94,7 +98,29 @@ export default function DivisionalMatrix({ onClose }: DivisionalMatrixProps) {
 
               <p className="matrix-detail-desc">{dept.description}</p>
 
-              <div className="matrix-systems-label">Core Technical Systems</div>
+              <div className="matrix-expand-container">
+                <button 
+                  className="matrix-expand-btn"
+                  onClick={() => setIsExpanded(!isExpanded)}
+                >
+                  {isExpanded ? 'Collapse Details' : 'Expand Details'}
+                </button>
+
+                <AnimatePresence>
+                  {isExpanded && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0, marginTop: 0 }}
+                      animate={{ height: 'auto', opacity: 1, marginTop: 16 }}
+                      exit={{ height: 0, opacity: 0, marginTop: 0 }}
+                      className="matrix-detail-expanded"
+                    >
+                      <p>{dept.detailedDescription}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              <div className="matrix-systems-label" style={{ marginTop: '24px' }}>Core Technical Systems</div>
               <div className="matrix-systems-grid">
                 {dept.systems.map(s => (
                   <div key={s} className="matrix-sys-chip">

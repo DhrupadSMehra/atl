@@ -3,6 +3,7 @@ import multer from 'multer';
 import { AuthRequest, verifyToken } from '../middleware/auth';
 import { Post } from '../models/Post';
 import { Comment } from '../models/Comment';
+import { User } from '../models/User';
 import { uploadService } from '../services/uploadService';
 import mongoose from 'mongoose';
 
@@ -27,18 +28,16 @@ router.get('/users/search', verifyToken, async (req: AuthRequest, res: Response)
   try {
     const q = req.query.q as string;
     
-    const { Member } = require('../models/Member');
-    
-    let filter: any = {};
+    let filter: any = { isBanned: { $ne: true } };
     if (q) {
-      filter.fullName = { $regex: new RegExp(q, 'i') };
+      filter.name = { $regex: new RegExp(q, 'i') };
     }
     
-    const members = await Member.find(filter).select('fullName _id').limit(10);
+    const users = await User.find(filter).select('name _id').limit(10);
     
-    res.json({ success: true, users: members.map((m: any) => ({ 
-      id: m._id, 
-      name: m.fullName 
+    res.json({ success: true, users: users.map((u: any) => ({ 
+      id: u._id, 
+      name: u.name 
     }))});
   } catch (err: any) {
     res.status(500).json({ success: false, error: err.message });

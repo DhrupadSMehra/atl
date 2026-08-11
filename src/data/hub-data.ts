@@ -32,6 +32,7 @@ export interface Department {
   systems: string[];
   activeNodes: number;
   description: string;
+  detailedDescription?: string;
   icon: string;
 }
 
@@ -202,6 +203,7 @@ export const departmentsData: Department[] = [
     systems: ['Servo Control', 'Gait Algorithms', 'IK Solvers', 'IMU Integration'],
     activeNodes: 4,
     description: 'Designs and validates all ground-contact robotic architectures. Specializes in terrain-adaptive locomotion, multi-legged systems, and precision actuator control.',
+    detailedDescription: 'The Kinetics & Locomotion division is responsible for the mechanical design, kinematics simulation, and physical fabrication of mobile robotic systems. They work heavily with CAD software, finite element analysis (FEA), and advanced materials to build robust chassis. From multi-legged walkers to wheeled platforms, this team ensures hardware durability and precise physical control using custom inverse kinematics and gait generation algorithms.',
     icon: '⬡',
   },
   {
@@ -212,6 +214,7 @@ export const departmentsData: Department[] = [
     systems: ['ROS 2 Stack', 'SLAM Pipelines', 'Path Planning', 'Sensor Fusion'],
     activeNodes: 3,
     description: 'Develops the autonomous decision-making frameworks that enable robots to perceive and navigate complex, dynamic environments without human input.',
+    detailedDescription: 'This division focuses on enabling robots to operate independently in dynamic environments. They integrate LiDAR, depth cameras, and IMUs into comprehensive SLAM (Simultaneous Localization and Mapping) pipelines. Their software stack handles real-time obstacle avoidance, path planning, and spatial reasoning, ensuring that agents can reliably traverse unknown terrains without human intervention.',
     icon: '◈',
   },
   {
@@ -222,6 +225,7 @@ export const departmentsData: Department[] = [
     systems: ['Deep Learning', 'Reinforcement Learning', 'NLP', 'Model Compression'],
     activeNodes: 5,
     description: 'Architects neural network models for real-world deployment. Focused on edge AI inference, low-latency inference pipelines, and autonomous learning systems.',
+    detailedDescription: 'Focused on high-level cognitive functions, the Machine Intelligence division deploys state-of-the-art machine learning models directly onto edge devices. They optimize deep neural networks for visual recognition, train reinforcement learning agents for complex control tasks, and implement computer vision pipelines that allow our robots to semantically understand their surroundings.',
     icon: '⬟',
   },
   {
@@ -232,6 +236,7 @@ export const departmentsData: Department[] = [
     systems: ['Firmware Dev', 'PCB Design', 'CAN Bus', 'RTOS'],
     activeNodes: 3,
     description: 'Builds the electronic nervous system of every TinkerThix machine. From custom PCBs to bare-metal firmware, this division runs the hardware layer.',
+    detailedDescription: 'The Embedded Systems team bridges the gap between software algorithms and physical hardware. They design custom printed circuit boards (PCBs), develop low-latency real-time operating system (RTOS) firmware, and implement robust communication protocols like CAN bus and SPI. Their work ensures that sensor data and actuator commands are processed with microsecond precision.',
     icon: '⬢',
   },
   {
@@ -242,6 +247,7 @@ export const departmentsData: Department[] = [
     systems: ['Systems Design', 'API Infrastructure', 'DevOps', 'Toolchains'],
     activeNodes: 2,
     description: 'Maintains the software backbone of TinkerThix operations — internal tooling, simulation environments, compilers, and the digital infrastructure layer.',
+    detailedDescription: 'Responsible for the overarching digital infrastructure, this division builds and maintains the core software systems that power TinkerThix. They develop custom simulation environments, continuous integration/continuous deployment (CI/CD) pipelines for robotic code, and internal telemetry dashboards. They ensure all codebases are scalable, secure, and maintainable.',
     icon: '◇',
   },
   {
@@ -252,6 +258,7 @@ export const departmentsData: Department[] = [
     systems: ['Technical Writing', 'Research Papers', 'IP Management', 'Benchmarking'],
     activeNodes: 2,
     description: 'Converts engineering breakthroughs into publishable research, patent filings, and competitive documentation. The institutional knowledge archive of TinkerThix.',
+    detailedDescription: 'The Research & Documentation division is the intellectual hub of TinkerThix. They translate engineering successes into comprehensive technical reports, white papers, and presentation materials. This team manages our institutional knowledge, oversees competitive benchmarking, and ensures our methodologies are meticulously documented for future reference and external publication.',
     icon: '▣',
   },
 ];

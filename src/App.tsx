@@ -229,32 +229,38 @@ const DEPARTMENTS = [
   {
     id: 'tech', label: 'Technical', code: 'DIV-ALPHA', members: 4, angle: -90,
     focus: 'Specializing in ROS 2 node architecture, custom PCB fabrication, multi-terrain kinetic locomotion solvers, and real-time autonomous computer vision tracking using customized OpenCV processing pipelines.',
-    stack: ['ROS 2', 'C++', 'IMU', 'PWM Grid']
+    details: 'The Technical division handles the core engineering of TinkerThix. From bare-metal firmware and custom printed circuit boards to high-level SLAM and reinforcement learning algorithms, this team ensures that every robot functions with precision and reliability in unstructured environments.',
+    stack: ['Robotics', 'ROS 2', 'Embedded Systems', 'Computer Vision']
   },
   {
     id: 'creative', label: 'Creative', code: 'DIV-BETA', members: 2, angle: -30,
-    focus: 'Driving industrial structural CAD modeling, chassis topology optimization, structural aesthetics, and advanced multi-material asset synthesis to push team fabrication beyond the benchmark.',
-    stack: ['SolidWorks', 'Fusion 360', 'FDM', 'Laser Cut']
+    focus: 'Specializing in fine arts, concept sketching, visual aesthetics, and physical crafting to conceptualize and bring artistic flair to our robotic designs.',
+    details: 'The Creative team is the artistic soul of TinkerThix. Using traditional fine arts techniques, they brainstorm and sketch initial robot concepts, paint and finish physical chassis parts, and craft visual elements that make our robots stand out. They rely on imagination and hands-on artistry rather than complex CAD software.',
+    stack: ['Fine Arts', 'Sketching', 'Painting', 'Concept Art']
   },
   {
     id: 'photo', label: 'Photography', code: 'DIV-GAMMA', members: 1, angle: 30,
     focus: 'Documenting high-speed field-run execution, archiving lab telemetry visual runs, and capturing precise ultra-high shutter speed motion diagnostics of deploying mechanical assets.',
-    stack: ['Lightroom', 'OpenCV', 'RAW', 'Color Science']
+    details: 'Visual data is critical for both engineering review and public presentation. The Photography division captures high-fidelity footage of our robots in action, providing the team with visual telemetry for debugging and ensuring our research is thoroughly documented for the archives.',
+    stack: ['Cinematography', 'Editing', 'Telemetry', 'Archival']
   },
   {
     id: 'marketing', label: 'Marketing', code: 'DIV-DELTA', members: 2, angle: 90,
     focus: 'Orchestrating strategic institutional positioning vectors, managing external sponsorship matrix channels, and tracking algorithmic outreach analytics to scale our ecosystem\'s reach.',
-    stack: ['Canva', 'Notion', 'LaTeX', 'Figma']
+    details: 'Marketing handles the external face of TinkerThix. They craft pitch decks for potential sponsors, write press releases for our achievements, and design our public-facing materials. Their strategic outreach ensures that our research receives the funding and recognition it deserves.',
+    stack: ['Sponsorships', 'Pitching', 'Outreach', 'Branding']
   },
   {
     id: 'social', label: 'Social Media', code: 'DIV-EPSILON', members: 2, angle: 150,
     focus: 'Architecting our digital footprint layout, managing rapid micro-content deployment pipelines, and analyzing high-frequency user engagement metrics across active media handles.',
-    stack: ['Instagram', 'LinkedIn', 'Reels', 'Analytics']
+    details: 'This division operates our digital presence on platforms like Instagram and LinkedIn. They transform complex engineering milestones into engaging, bite-sized content, fostering a community of robotics enthusiasts and ensuring the world stays updated on TinkerThix operations.',
+    stack: ['Content Creation', 'Engagement', 'Analytics', 'Digital Presence']
   },
   {
     id: 'hospitality', label: 'Hospitality', code: 'DIV-ZETA', members: 2, angle: 210,
     focus: 'Synchronizing ground-level logistics, managing critical laboratory resource allocation, and executing cross-department infrastructure operational routing during major milestones.',
-    stack: ['Protocol', 'Coordination', 'Events', 'Relations']
+    details: 'Hospitality is the backbone of our operations during crunch times and events. They manage supply chains, coordinate inter-departmental logistics, and ensure that the team is supported during intense hackathons or deployment phases, optimizing human performance across the board.',
+    stack: ['Logistics', 'Event Management', 'Supply Chain', 'Operations']
   },
 ];
 
@@ -295,13 +301,295 @@ const DataStreamGeometry = () => {
   );
 };
 
+const CreativeGeometry = () => {
+  const groupRef = useRef<THREE.Group>(null);
+  useFrame((_, delta) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y += delta * 0.4;
+      groupRef.current.position.y = Math.sin(Date.now() / 1000) * 0.1;
+    }
+  });
+  return (
+    <group ref={groupRef} position={[0, -0.5, 0]}>
+      {/* Easel Legs */}
+      <mesh position={[-0.6, 0.5, 0]} rotation={[0, 0, -0.2]}>
+        <cylinderGeometry args={[0.05, 0.05, 2, 8]} />
+        <meshStandardMaterial color="#8B4513" />
+      </mesh>
+      <mesh position={[0.6, 0.5, 0]} rotation={[0, 0, 0.2]}>
+        <cylinderGeometry args={[0.05, 0.05, 2, 8]} />
+        <meshStandardMaterial color="#8B4513" />
+      </mesh>
+      <mesh position={[0, 0.5, -0.5]} rotation={[0.3, 0, 0]}>
+        <cylinderGeometry args={[0.05, 0.05, 2, 8]} />
+        <meshStandardMaterial color="#8B4513" />
+      </mesh>
+      {/* Canvas */}
+      <mesh position={[0, 0.8, 0.1]} rotation={[-0.1, 0, 0]}>
+        <boxGeometry args={[1.2, 1.5, 0.1]} />
+        <meshStandardMaterial color="#ffffff" />
+      </mesh>
+      {/* Paint dabs on Canvas */}
+      <mesh position={[-0.3, 1.2, 0.16]} rotation={[-0.1, 0, 0]}>
+        <sphereGeometry args={[0.1, 16, 16]} />
+        <meshStandardMaterial color="#ff0000" />
+      </mesh>
+      <mesh position={[0.2, 1.0, 0.16]} rotation={[-0.1, 0, 0]}>
+        <sphereGeometry args={[0.12, 16, 16]} />
+        <meshStandardMaterial color="#00ff00" />
+      </mesh>
+      <mesh position={[0.1, 0.6, 0.16]} rotation={[-0.1, 0, 0]}>
+        <sphereGeometry args={[0.08, 16, 16]} />
+        <meshStandardMaterial color="#0000ff" />
+      </mesh>
+      {/* Paintbrush leaning */}
+      <group position={[0.8, 0.4, 0.2]} rotation={[0, 0, 0.3]}>
+        <mesh position={[0, 0, 0]}>
+          <cylinderGeometry args={[0.03, 0.03, 1.5, 8]} />
+          <meshStandardMaterial color="#DEB887" />
+        </mesh>
+        <mesh position={[0, 0.8, 0]}>
+          <cylinderGeometry args={[0.04, 0.04, 0.2, 8]} />
+          <meshStandardMaterial color="#aaaaaa" metalness={0.8} />
+        </mesh>
+        <mesh position={[0, 1.0, 0]}>
+          <coneGeometry args={[0.04, 0.2, 8]} />
+          <meshStandardMaterial color="#333333" />
+        </mesh>
+      </group>
+    </group>
+  );
+};
+
+const MarketingGeometry = () => {
+  const groupRef = useRef<THREE.Group>(null);
+  useFrame((_, delta) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y += delta * 0.4;
+      groupRef.current.position.y = Math.sin(Date.now() / 800) * 0.1;
+    }
+  });
+  return (
+    <group ref={groupRef} position={[0, -0.5, 0]}>
+      {/* Bars */}
+      <mesh position={[-0.8, 0.2, 0]}>
+        <boxGeometry args={[0.3, 0.4, 0.3]} />
+        <meshStandardMaterial color="#2563eb" />
+      </mesh>
+      <mesh position={[-0.4, 0.4, 0]}>
+        <boxGeometry args={[0.3, 0.8, 0.3]} />
+        <meshStandardMaterial color="#1d4ed8" />
+      </mesh>
+      <mesh position={[0, 0.7, 0]}>
+        <boxGeometry args={[0.3, 1.4, 0.3]} />
+        <meshStandardMaterial color="#059669" />
+      </mesh>
+      <mesh position={[0.4, 1.0, 0]}>
+        <boxGeometry args={[0.3, 2.0, 0.3]} />
+        <meshStandardMaterial color="#00ff66" />
+      </mesh>
+      {/* Trend Arrow */}
+      <group position={[-0.3, 1.2, 0.3]} rotation={[0, 0, Math.PI / 6]}>
+        <mesh position={[0, 0, 0]} rotation={[0, 0, -Math.PI / 2]}>
+          <cylinderGeometry args={[0.08, 0.08, 1.8, 16]} />
+          <meshStandardMaterial color="#ff4400" />
+        </mesh>
+        <mesh position={[0.9, 0, 0]} rotation={[0, 0, -Math.PI / 2]}>
+          <coneGeometry args={[0.2, 0.4, 16]} />
+          <meshStandardMaterial color="#ff4400" />
+        </mesh>
+      </group>
+    </group>
+  );
+};
+
+const SocialGeometry = () => {
+  const groupRef = useRef<THREE.Group>(null);
+  useFrame((_, delta) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y += delta * 0.4;
+      groupRef.current.position.y = Math.sin(Date.now() / 1000) * 0.1;
+    }
+  });
+  return (
+    <group ref={groupRef}>
+      {/* Central Bubble */}
+      <group position={[0, 0, 0]}>
+        <mesh>
+          <boxGeometry args={[1.2, 0.8, 0.4]} />
+          <meshStandardMaterial color="#1DA1F2" />
+        </mesh>
+        <mesh position={[-0.4, -0.5, 0]} rotation={[0, 0, Math.PI / 4]}>
+          <boxGeometry args={[0.4, 0.4, 0.4]} />
+          <meshStandardMaterial color="#1DA1F2" />
+        </mesh>
+      </group>
+      
+      {/* Connector to Pink Bubble */}
+      <mesh position={[0.7, 0.5, 0]} rotation={[0, 0, -Math.PI / 4]}>
+        <cylinderGeometry args={[0.03, 0.03, 1, 8]} />
+        <meshStandardMaterial color="#ffffff" />
+      </mesh>
+
+      {/* Pink Bubble */}
+      <group position={[1.2, 0.8, 0]}>
+        <mesh>
+          <boxGeometry args={[0.8, 0.5, 0.3]} />
+          <meshStandardMaterial color="#E4405F" />
+        </mesh>
+        <mesh position={[0.2, -0.3, 0]} rotation={[0, 0, Math.PI / 4]}>
+          <boxGeometry args={[0.2, 0.2, 0.3]} />
+          <meshStandardMaterial color="#E4405F" />
+        </mesh>
+      </group>
+
+      {/* Connector to Green Bubble */}
+      <mesh position={[-0.8, 0.6, 0.2]} rotation={[0, 0, Math.PI / 4]}>
+        <cylinderGeometry args={[0.03, 0.03, 1.2, 8]} />
+        <meshStandardMaterial color="#ffffff" />
+      </mesh>
+
+      {/* Green Bubble */}
+      <group position={[-1.3, 1.0, 0.4]}>
+        <mesh>
+          <boxGeometry args={[0.7, 0.4, 0.2]} />
+          <meshStandardMaterial color="#00ff66" />
+        </mesh>
+        <mesh position={[-0.1, -0.2, 0]} rotation={[0, 0, Math.PI / 4]}>
+          <boxGeometry args={[0.15, 0.15, 0.2]} />
+          <meshStandardMaterial color="#00ff66" />
+        </mesh>
+      </group>
+    </group>
+  );
+};
+
+const HospitalityGeometry = () => {
+  const groupRef = useRef<THREE.Group>(null);
+  useFrame((_, delta) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y += delta * 0.4;
+      groupRef.current.position.y = Math.sin(Date.now() / 900) * 0.1;
+    }
+  });
+  return (
+    <group ref={groupRef}>
+      {/* Clipboard board */}
+      <mesh position={[0, 0, 0]}>
+        <boxGeometry args={[1.4, 2, 0.1]} />
+        <meshStandardMaterial color="#333333" />
+      </mesh>
+      {/* Clip at top */}
+      <mesh position={[0, 0.9, 0.08]}>
+        <boxGeometry args={[0.6, 0.2, 0.15]} />
+        <meshStandardMaterial color="#aaaaaa" metalness={0.8} />
+      </mesh>
+      <mesh position={[0, 1.0, 0.08]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.05, 0.05, 0.4, 16]} />
+        <meshStandardMaterial color="#aaaaaa" metalness={0.8} />
+      </mesh>
+      
+      {/* Lines and checkmarks */}
+      <group position={[0, 0.3, 0.06]}>
+        {/* Line 1 */}
+        <mesh position={[0.1, 0, 0]}>
+          <boxGeometry args={[0.8, 0.05, 0.02]} />
+          <meshStandardMaterial color="#ffffff" />
+        </mesh>
+        <mesh position={[-0.45, 0, 0]}>
+          <sphereGeometry args={[0.08, 16, 16]} />
+          <meshStandardMaterial color="#00ff66" />
+        </mesh>
+        
+        {/* Line 2 */}
+        <mesh position={[0.1, -0.4, 0]}>
+          <boxGeometry args={[0.8, 0.05, 0.02]} />
+          <meshStandardMaterial color="#ffffff" />
+        </mesh>
+        <mesh position={[-0.45, -0.4, 0]}>
+          <sphereGeometry args={[0.08, 16, 16]} />
+          <meshStandardMaterial color="#00ff66" />
+        </mesh>
+        
+        {/* Line 3 */}
+        <mesh position={[0.1, -0.8, 0]}>
+          <boxGeometry args={[0.8, 0.05, 0.02]} />
+          <meshStandardMaterial color="#ffffff" />
+        </mesh>
+        <mesh position={[-0.45, -0.8, 0]}>
+          <sphereGeometry args={[0.08, 16, 16]} />
+          <meshStandardMaterial color="#00ff66" />
+        </mesh>
+      </group>
+    </group>
+  );
+};
+
+const PhotoGeometry = () => {
+  const groupRef = useRef<THREE.Group>(null);
+  useFrame((_, delta) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y += delta * 0.4;
+      groupRef.current.position.y = Math.sin(Date.now() / 700) * 0.1;
+    }
+  });
+  return (
+    <group ref={groupRef}>
+      {/* Camera Body */}
+      <mesh position={[0, 0, 0]}>
+        <boxGeometry args={[1.8, 1.2, 0.8]} />
+        <meshStandardMaterial color="#1a1a1a" metalness={0.6} roughness={0.7} />
+      </mesh>
+      {/* Textured Grip */}
+      <mesh position={[0.7, 0, 0.2]}>
+        <boxGeometry args={[0.5, 1.2, 0.85]} />
+        <meshStandardMaterial color="#111111" roughness={0.9} />
+      </mesh>
+      {/* Viewfinder Prism */}
+      <mesh position={[0, 0.7, 0]}>
+        <boxGeometry args={[0.6, 0.4, 0.6]} />
+        <meshStandardMaterial color="#1a1a1a" metalness={0.6} roughness={0.7} />
+      </mesh>
+      <mesh position={[0, 0.8, 0]}>
+        <coneGeometry args={[0.4, 0.4, 4]} />
+        <meshStandardMaterial color="#1a1a1a" metalness={0.6} />
+      </mesh>
+      {/* Lens Barrel Segment 1 */}
+      <mesh position={[-0.2, 0, 0.45]} rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[0.5, 0.5, 0.4, 32]} />
+        <meshStandardMaterial color="#222222" metalness={0.8} roughness={0.3} />
+      </mesh>
+      {/* Lens Barrel Segment 2 */}
+      <mesh position={[-0.2, 0, 0.7]} rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[0.45, 0.45, 0.3, 32]} />
+        <meshStandardMaterial color="#111111" metalness={0.9} roughness={0.2} />
+      </mesh>
+      {/* Lens Glass */}
+      <mesh position={[-0.2, 0, 0.86]} rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[0.35, 0.35, 0.05, 32]} />
+        <meshStandardMaterial color="#00ffcc" metalness={1} roughness={0} transparent opacity={0.6} emissive="#00ffcc" emissiveIntensity={0.2} />
+      </mesh>
+      {/* Mode Dial */}
+      <mesh position={[0.6, 0.65, 0]} rotation={[0, 0, 0]}>
+        <cylinderGeometry args={[0.2, 0.2, 0.1, 16]} />
+        <meshStandardMaterial color="#333333" metalness={0.8} />
+      </mesh>
+      {/* Shutter Button */}
+      <mesh position={[0.7, 0.65, 0.25]} rotation={[0, 0, 0]}>
+        <cylinderGeometry args={[0.08, 0.08, 0.15, 16]} />
+        <meshStandardMaterial color="#ff3333" />
+      </mesh>
+    </group>
+  );
+};
+
 const DynamicDepartmentCanvas = ({ departmentId }: { departmentId: string }) => {
   if (departmentId === 'tech') {
     return (
       <Canvas camera={{ position: [0, 2, 8], fov: 45 }} style={{ background: '#050505' }}>
         <ambientLight intensity={0.5} />
         <directionalLight position={[10, 10, 10]} intensity={1} />
-        <ModelRenderer modelType="arm" />
+        <ModelRenderer modelType="robot" />
         <gridHelper args={[20, 20, '#00ff66', '#004422']} position={[0, -2, 0]} />
         <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={2} />
       </Canvas>
@@ -310,11 +598,9 @@ const DynamicDepartmentCanvas = ({ departmentId }: { departmentId: string }) => 
 
   if (departmentId === 'creative') {
     return (
-      <Canvas camera={{ position: [0, 2, 8], fov: 45 }} style={{ background: '#050505' }}>
-        <ambientLight intensity={0.2} />
-        <directionalLight position={[5, 5, 5]} intensity={2} color="#00ffff" />
-        <directionalLight position={[-5, 5, -5]} intensity={2} color="#ff00ff" />
-        <ModelRenderer modelType="robot" />
+      <Canvas camera={{ position: [0, 0, 8], fov: 45 }} style={{ background: '#050505' }}>
+        <ambientLight intensity={0.5} />
+        <CreativeGeometry />
         <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={2} />
       </Canvas>
     );
@@ -326,7 +612,7 @@ const DynamicDepartmentCanvas = ({ departmentId }: { departmentId: string }) => 
         <Canvas camera={{ position: [0, 2, 8], fov: 45 }} style={{ background: '#050505' }}>
           <ambientLight intensity={0.8} />
           <directionalLight position={[10, 10, 10]} intensity={1} />
-          <ModelRenderer modelType="robot" />
+          <PhotoGeometry />
           <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={2} />
         </Canvas>
         <div className="landing-photo-hud">
@@ -345,6 +631,40 @@ const DynamicDepartmentCanvas = ({ departmentId }: { departmentId: string }) => 
     );
   }
 
+  if (departmentId === 'marketing') {
+    return (
+      <Canvas camera={{ position: [3, 3, 5], fov: 45 }} style={{ background: '#050505' }}>
+        <ambientLight intensity={0.5} />
+        <directionalLight position={[5, 5, 5]} intensity={1.5} color="#ffffff" />
+        <directionalLight position={[-5, 5, -5]} intensity={1} color="#00ffff" />
+        <MarketingGeometry />
+        <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={2} />
+      </Canvas>
+    );
+  }
+
+  if (departmentId === 'social') {
+    return (
+      <Canvas camera={{ position: [0, 0, 5], fov: 45 }} style={{ background: '#050505' }}>
+        <ambientLight intensity={0.5} />
+        <directionalLight position={[5, 5, 5]} intensity={1} />
+        <SocialGeometry />
+        <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={2} />
+      </Canvas>
+    );
+  }
+
+  if (departmentId === 'hospitality') {
+    return (
+      <Canvas camera={{ position: [0, 0, 6], fov: 45 }} style={{ background: '#050505' }}>
+        <ambientLight intensity={0.5} />
+        <directionalLight position={[10, 10, 10]} intensity={1.5} />
+        <HospitalityGeometry />
+        <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={2} />
+      </Canvas>
+    );
+  }
+
   return (
     <Canvas camera={{ position: [0, 0, 10], fov: 45 }} style={{ background: '#050505' }}>
       <ambientLight intensity={0.5} />
@@ -359,6 +679,12 @@ const RADIUS = 145, CX = 200, CY = 200;
 
 const DepartmentNodeMatrix = () => {
   const [active, setActive] = useState<string | null>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
+  
+  useEffect(() => {
+    setIsExpanded(false);
+  }, [active]);
+  
   const dept = DEPARTMENTS.find(d => d.id === active);
 
   return (
@@ -490,13 +816,35 @@ const DepartmentNodeMatrix = () => {
                   <div className="landing-db-field-label">RESEARCH FOCUS</div>
                   <div className="landing-db-field-value">{dept.focus}</div>
                 </div>
+                
+                <div className="landing-db-expand-wrapper">
+                  <button 
+                    className="landing-db-expand-btn"
+                    onClick={() => setIsExpanded(!isExpanded)}
+                  >
+                    {isExpanded ? '[-] COLLAPSE MODULE' : '[+] EXPAND DATABLOCK'}
+                  </button>
+                  
+                  <AnimatePresence>
+                    {isExpanded && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="landing-db-expanded-content"
+                      >
+                        <div className="landing-db-field-value">{dept.details}</div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
 
                 <div className="landing-db-field">
                   <div className="landing-db-field-label">TECH STACK</div>
                   <div className="landing-db-stack">
                     {dept.stack.map(s => <span key={s} className="landing-db-chip">{s}</span>)}
                   </div>
-                </div> {/* <-- FIX: Kept this open so the elements below stay inside the motion card! */}
+                </div>
 
                 <div className="landing-db-canvas-wrapper">
                   <DynamicDepartmentCanvas departmentId={dept.id} />
@@ -1311,6 +1659,17 @@ function MainRouter() {
 
   return (
     <>
+      {isAuthenticated && !isPendingAdminSetup && !isPendingRegistration && view !== 'booting' && (
+        <UserBar
+          onNavigateNotices={goToNotices}
+          onNavigateTeam={goToTeam}
+          onNavigateStayBacks={goToStayBacks}
+          onNavigateCommunity={goToCommunity}
+          onOpenProfile={() => setIsProfileOpen(true)}
+          onOpenDirectory={goToDirectory}
+          currentView={view as any}
+        />
+      )}
       <AnimatePresence mode="wait">
         {view === 'booting' && (
           <motion.div
@@ -1368,15 +1727,6 @@ function MainRouter() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.35 }}
           >
-            <UserBar
-              onNavigateNotices={goToNotices}
-              onNavigateTeam={goToTeam}
-              onNavigateStayBacks={goToStayBacks}
-              onNavigateCommunity={goToCommunity}
-              onOpenProfile={() => setIsProfileOpen(true)}
-              onOpenDirectory={goToDirectory}
-              currentView="landing"
-            />
             <LandingPage
               onNavigateTeam={goToTeam}
               onNavigateNotices={goToNotices}
@@ -1392,15 +1742,6 @@ function MainRouter() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.35 }}
           >
-            <UserBar
-              onNavigateNotices={goToNotices}
-              onNavigateTeam={undefined}
-              onNavigateStayBacks={goToStayBacks}
-              onNavigateCommunity={goToCommunity}
-              onOpenProfile={() => setIsProfileOpen(true)}
-              onOpenDirectory={goToDirectory}
-              currentView="team"
-            />
             <TeamDossier onBack={goToLanding} />
           </motion.div>
         )}
@@ -1414,15 +1755,6 @@ function MainRouter() {
             transition={{ duration: 0.35 }}
             style={{ minHeight: '100vh' }}
           >
-            <UserBar
-              onNavigateTeam={goToTeam}
-              onNavigateNotices={undefined}
-              onNavigateStayBacks={goToStayBacks}
-              onNavigateCommunity={goToCommunity}
-              onOpenProfile={() => setIsProfileOpen(true)}
-              onOpenDirectory={goToDirectory}
-              currentView="notices"
-            />
             <NoticeBoardPage onBack={goToLanding} />
           </motion.div>
         )}
@@ -1436,15 +1768,6 @@ function MainRouter() {
             transition={{ duration: 0.35 }}
             style={{ minHeight: '100vh' }}
           >
-            <UserBar
-              onNavigateTeam={goToTeam}
-              onNavigateNotices={goToNotices}
-              onNavigateStayBacks={undefined}
-              onNavigateCommunity={goToCommunity}
-              onOpenProfile={() => setIsProfileOpen(true)}
-              onOpenDirectory={goToDirectory}
-              currentView="staybacks"
-            />
             <StayBackPage onBack={goToLanding} />
           </motion.div>
         )}
@@ -1458,15 +1781,6 @@ function MainRouter() {
             transition={{ duration: 0.35 }}
             style={{ minHeight: '100vh' }}
           >
-            <UserBar
-              onNavigateTeam={goToTeam}
-              onNavigateNotices={goToNotices}
-              onNavigateStayBacks={goToStayBacks}
-              onNavigateCommunity={goToCommunity}
-              onOpenProfile={() => setIsProfileOpen(true)}
-              onOpenDirectory={undefined}
-              currentView="directory"
-            />
             <AdminMemberDirectory onBack={goToLanding} />
           </motion.div>
         )}
@@ -1480,15 +1794,6 @@ function MainRouter() {
             transition={{ duration: 0.35 }}
             style={{ minHeight: '100vh' }}
           >
-            <UserBar
-              onNavigateTeam={goToTeam}
-              onNavigateNotices={goToNotices}
-              onNavigateStayBacks={goToStayBacks}
-              onNavigateCommunity={undefined}
-              onOpenProfile={() => setIsProfileOpen(true)}
-              onOpenDirectory={goToDirectory}
-              currentView="community"
-            />
             <CommunityBoardPage onBack={goToLanding} />
           </motion.div>
         )}

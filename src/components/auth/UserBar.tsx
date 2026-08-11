@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { User, Users } from 'lucide-react';
+import { User } from 'lucide-react';
 import './auth.css';
 
 interface UserBarProps {

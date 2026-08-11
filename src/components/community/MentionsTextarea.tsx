@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import type { KeyboardEvent } from 'react';
 
 interface MentionsTextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   value: string;
@@ -14,41 +13,54 @@ const DEPARTMENTS = [
 
 const API_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5175').replace(/\/+$/, '');
 
-export const MentionsTextarea: React.FC<MentionsTextareaProps> = ({ value, onChange, className, ...props }) => {
+export const MentionsTextarea: React.FC<MentionsTextareaProps> = ({ 
+  value, 
+  onChange, 
+  className,
+  onSelect,
+  onKeyDown,
+  ...rest 
+}) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [, setDropdownPosition] = useState({ top: 0, left: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   
-  const [suggestions, setSuggestions] = useState<{ id: string; label: string; type: 'user' | 'dept' }[]>([]);
+  const [suggestions, setSuggestions] = useState<{ id: string; handle: string; displayName: string; type: 'user' | 'dept' }[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [activeQuery, setActiveQuery] = useState<{ text: string; startIndex: number; type: 'user' | 'dept' } | null>(null);
 
-  // Parse text at cursor to detect @ or #
-  const handleSelect = (e: any) => {
-    const el = e.target;
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setDropdownVisible(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleSelect = (e: React.SyntheticEvent<HTMLTextAreaElement, Event>) => {
+    const el = e.currentTarget;
     const cursorPosition = el.selectionStart;
     
-    // Find the word currently being typed
     const textBeforeCursor = el.value.substring(0, cursorPosition);
     
-    // Regex matches the last word if it starts with @ or # (allowing spaces for full names)
-    const match = textBeforeCursor.match(/([@#])([a-zA-Z0-9_ ]{0,30})$/);
+    // Match @ or # followed by word characters, up to 30 length
+    const match = textBeforeCursor.match(/([@#])(\w{0,30})$/);
     
     if (match) {
       const type = match[1] === '@' ? 'user' : 'dept';
       const query = match[2];
       const startIndex = match.index || 0;
       setActiveQuery({ text: query, startIndex, type });
-      
-      // Basic positioning logic: we will just show it near the bottom of the textarea wrapper
-      setDropdownPosition({ top: 100, left: 0 }); 
     } else {
       setActiveQuery(null);
       setDropdownVisible(false);
     }
+
+    if (onSelect) onSelect(e);
   };
 
-  // Serialize activeQuery to a string so useEffect always triggers correctly
   const activeQueryKey = activeQuery ? `${activeQuery.type}:${activeQuery.startIndex}:${activeQuery.text}` : '';
 
   useEffect(() => {
@@ -64,7 +76,7 @@ export const MentionsTextarea: React.FC<MentionsTextareaProps> = ({ value, onCha
       if (activeQuery.type === 'dept') {
         const filtered = DEPARTMENTS
           .filter(d => d.toLowerCase().includes(activeQuery.text.toLowerCase()))
-          .map(d => ({ id: d, label: d, type: 'dept' as const }));
+          .map(d => ({ id: d, handle: d, displayName: d, type: 'dept' as const }));
         
         if (!cancelled) {
           setSuggestions(filtered);
@@ -72,7 +84,6 @@ export const MentionsTextarea: React.FC<MentionsTextareaProps> = ({ value, onCha
           setDropdownVisible(filtered.length > 0);
         }
       } else {
-        // Fetch users
         try {
           const token = localStorage.getItem('atl_jwt_token');
           const res = await fetch(`${API_URL}/api/community/users/search?q=${encodeURIComponent(activeQuery.text)}`, {
@@ -80,7 +91,12 @@ export const MentionsTextarea: React.FC<MentionsTextareaProps> = ({ value, onCha
           });
           const data = await res.json();
           if (!cancelled && data.success && data.users) {
-            const mapped = data.users.map((u: any) => ({ id: u.id, label: u.name.replace(/\s+/g, ''), type: 'user' as const }));
+            const mapped = data.users.map((u: any) => ({ 
+              id: u.id, 
+              handle: u.name.replace(/\s+/g, ''), 
+              displayName: u.name,
+              type: 'user' as const 
+            }));
             setSuggestions(mapped);
             setSelectedIndex(0);
             setDropdownVisible(mapped.length > 0);
@@ -94,8 +110,6 @@ export const MentionsTextarea: React.FC<MentionsTextareaProps> = ({ value, onCha
       }
     };
     
-    // No debounce for empty query (just '@' typed) — show users immediately
-    // Debounce slightly when user is actively typing a name
     const delay = activeQuery.type === 'dept' || activeQuery.text === '' ? 0 : 200;
     const timer = setTimeout(fetchSuggestions, delay);
     return () => {
@@ -104,31 +118,22 @@ export const MentionsTextarea: React.FC<MentionsTextareaProps> = ({ value, onCha
     };
   }, [activeQueryKey]);
 
-  const insertSuggestion = (suggestion: { label: string, type: string }) => {
+  const insertSuggestion = (suggestion: { handle: string, type: string }) => {
     if (!activeQuery || !textareaRef.current) return;
     
     const prefix = suggestion.type === 'user' ? '@' : '#';
-    const replacement = `${prefix}${suggestion.label} `;
+    const replacement = `${prefix}${suggestion.handle} `;
     
     const before = value.substring(0, activeQuery.startIndex);
     const after = value.substring(textareaRef.current.selectionStart);
     
     const newValue = before + replacement + after;
     
-    // Create a synthetic event to call onChange
-    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value")?.set;
-    nativeInputValueSetter?.call(textareaRef.current, newValue);
-    
-    const event = new Event('input', { bubbles: true });
-    textareaRef.current.dispatchEvent(event);
-    
-    // We manually call onChange just in case
-    onChange({ target: { value: newValue } } as any);
+    onChange({ target: { value: newValue } } as React.ChangeEvent<HTMLTextAreaElement>);
     
     setActiveQuery(null);
     setDropdownVisible(false);
     
-    // Restore focus and cursor position
     setTimeout(() => {
       if (textareaRef.current) {
         textareaRef.current.focus();
@@ -138,7 +143,7 @@ export const MentionsTextarea: React.FC<MentionsTextareaProps> = ({ value, onCha
     }, 0);
   };
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (dropdownVisible && suggestions.length > 0) {
       if (e.key === 'ArrowDown') {
         e.preventDefault();
@@ -153,12 +158,14 @@ export const MentionsTextarea: React.FC<MentionsTextareaProps> = ({ value, onCha
         setDropdownVisible(false);
       }
     }
+    
+    if (onKeyDown) onKeyDown(e);
   };
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <div ref={containerRef} style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
       <textarea
-        {...props}
+        {...rest}
         ref={textareaRef}
         value={value}
         onChange={(e) => {
@@ -179,7 +186,8 @@ export const MentionsTextarea: React.FC<MentionsTextareaProps> = ({ value, onCha
               onClick={() => insertSuggestion(s)}
               onMouseEnter={() => setSelectedIndex(idx)}
             >
-              {s.type === 'user' ? '@' : '#'}{s.label}
+              <span className="mention-item-prefix">{s.type === 'user' ? '@' : '#'}</span>
+              {s.displayName}
             </div>
           ))}
         </div>
