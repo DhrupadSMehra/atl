@@ -259,6 +259,9 @@
   width: auto;
   object-fit: contain;
   filter: drop-shadow(0 15px 30px rgba(0,0,0,0.95));
+  transform: translateZ(0);
+  will-change: opacity, transform;
+  backface-visibility: hidden;
 }
 
 .classified .character-graphic {
@@ -644,6 +647,9 @@
   width: 100%; height: 100%;
   object-fit: cover;
   transition: filter 0.3s ease;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: paint layout;
 }
 
 .roster-card.active .roster-thumbnail { filter: brightness(1.15) contrast(1.05); }

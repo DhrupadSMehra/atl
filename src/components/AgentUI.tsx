@@ -50,6 +50,8 @@ const CharacterImage = ({ src, alt, isClassified }: { src: string, alt: string, 
     <img
       src={src}
       alt={alt}
+      decoding="async"
+      fetchPriority="high"
       className="character-graphic"
       onError={() => setHasError(true)}
     />
@@ -81,6 +83,10 @@ const RosterThumbnail = ({ src, name, isClassified }: { src: string, name: strin
     <img
       src={src}
       alt={name}
+      width={60}
+      height={75}
+      decoding="async"
+      loading="lazy"
       className="roster-thumbnail"
       onError={() => setHasError(true)}
     />
@@ -146,6 +152,21 @@ export default function AgentUI({ onBack }: AgentUIProps) {
       }
     }
   }, [activeIndex]);
+
+  // PRE-DECODE ADJACENT MEMBER PHOTOS IN BACKGROUND TO PREVENT RENDER LAG
+  useEffect(() => {
+    const nextIdx = (activeIndex + 1) % teamData.length;
+    const prevIdx = (activeIndex - 1 + teamData.length) % teamData.length;
+
+    [teamData[nextIdx], teamData[prevIdx]].forEach(m => {
+      const imgPath = mode === 'reality' ? m.realPhoto : m.agentPhoto;
+      if (imgPath && !imgPath.includes('missing') && !imgPath.includes('placeholder')) {
+        const img = new Image();
+        img.decoding = 'async';
+        img.src = imgPath;
+      }
+    });
+  }, [activeIndex, mode]);
 
   // DYNAMIC SYSTEM TOGGLE CINEMATIC
   const triggerTransition = (targetMode: 'reality' | 'classified') => {
@@ -358,7 +379,7 @@ export default function AgentUI({ onBack }: AgentUIProps) {
           </div>
         </div>
 
-        {/* LEFT INFORMATION PANEL (NARRATIVE BIOGRAPHY & SYSTEM SKILLS) */}
+        {/* LEFT INFORMATION PANEL (NARRATIVE BIOGRAPHY & SYSTEM SKILLS / OPERATIONAL PROFILE) */}
         <aside className="left-info-panel-region">
           {/* HUD corner borders */}
           <div className="hud-glow-corner top-left"></div>
@@ -376,8 +397,12 @@ export default function AgentUI({ onBack }: AgentUIProps) {
               className="info-body-scroll"
             >
               <div className="info-header">
-                <span className="character-title-role">// ARCHIVE INTEGRITY RAW</span>
-                <h2 className="character-main-name" style={{ fontSize: '1.8rem' }}>Dossier Log</h2>
+                <span className="character-title-role">
+                  {mode === 'reality' ? '// ARCHIVE INTEGRITY RAW' : '// CLASSIFIED AI PROFILE'}
+                </span>
+                <h2 className="character-main-name" style={{ fontSize: '1.8rem' }}>
+                  {mode === 'reality' ? 'Dossier Log' : 'System Intel'}
+                </h2>
               </div>
 
               {mode === 'reality' ? (
@@ -399,21 +424,33 @@ export default function AgentUI({ onBack }: AgentUIProps) {
               ) : (
                 <>
                   <div className="info-section">
-                    <span className="section-title">// Reconstructed Agent Dossier</span>
-                    <p className="section-text">{currentMember.dossier}</p>
+                    <span className="section-title">// System Introduction</span>
+                    <p className="section-text" style={{ fontStyle: 'italic', borderLeft: '2px solid var(--accent)', paddingLeft: '10px' }}>
+                      "{currentMember.dossier}"
+                    </p>
                   </div>
 
-                  <div className="info-section">
-                    <span className="section-title">// Tactical Abilities Grid</span>
-                    <div className="abilities-list">
-                      {currentMember.abilities.map((ab, index) => (
-                        <div className="ability-item" key={index}>
-                          <div className="ability-name">{ab.name}</div>
-                          <div className="ability-desc">{ab.description}</div>
-                        </div>
-                      ))}
+                  {currentMember.operationalProfile && currentMember.operationalProfile.length > 0 && (
+                    <div className="info-section">
+                      <span className="section-title">// Operational Profile</span>
+                      <ul className="bullets-list">
+                        {currentMember.operationalProfile.map((item, index) => (
+                          <li key={index}>{item}</li>
+                        ))}
+                      </ul>
                     </div>
-                  </div>
+                  )}
+
+                  {currentMember.secondaryCapabilities && currentMember.secondaryCapabilities.length > 0 && (
+                    <div className="info-section">
+                      <span className="section-title">// Secondary Capabilities</span>
+                      <div className="skills-container">
+                        {currentMember.secondaryCapabilities.map((cap, index) => (
+                          <span className="skill-tag" key={index}>{cap}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </>
               )}
             </motion.div>
@@ -439,7 +476,7 @@ export default function AgentUI({ onBack }: AgentUIProps) {
             >
               <div className="info-header">
                 <span className="character-title-role">
-                  {mode === 'reality' ? 'Public Identity' : 'Agent Designation'}
+                  {mode === 'reality' ? currentMember.position : currentMember.designation}
                 </span>
                 <h2 className="character-main-name">
                   {displayName}
@@ -489,28 +526,31 @@ export default function AgentUI({ onBack }: AgentUIProps) {
                 </>
               ) : (
                 <>
-                  {currentMember.isPresident && (
-                    <div className="info-section" style={{ borderBottom: '1px dashed rgba(255, 0, 60, 0.15)', paddingBottom: '8px' }}>
-                      <span className="section-title" style={{ color: 'var(--classified-accent)' }}>HUD INTEL STATUS: ACTIVE</span>
-                      <span style={{ fontSize: '0.68rem', color: '#ff3c00' }}>
-                        WARNING: The following records contain reconstructed agent profiles generated from ATL personnel data.
-                      </span>
-                    </div>
-                  )}
-
                   <div className="info-section grid-section-hud">
-                    <div className="hud-data-item">
-                      <span className="hud-data-label">Clearance Level</span>
-                      <span className="hud-data-value">ATL-7</span>
-                    </div>
-                    <div className="hud-data-item">
-                      <span className="hud-data-label">Specialization</span>
-                      <span className="hud-data-value text-accent">{currentMember.specialization}</span>
+                    <div className="hud-data-item" style={{ gridColumn: 'span 2' }}>
+                      <span className="hud-data-label">Primary Specialization</span>
+                      <span className="hud-data-value text-accent" style={{ fontSize: '0.75rem', lineHeight: '1.3' }}>
+                        {currentMember.specialization}
+                      </span>
                     </div>
                   </div>
 
+                  {currentMember.systemStats && currentMember.systemStats.length > 0 && (
+                    <div className="info-section">
+                      <span className="section-title">// System Attributes</span>
+                      <div className="grid-section-hud">
+                        {currentMember.systemStats.map((stat, index) => (
+                          <div className="hud-data-item" key={index}>
+                            <span className="hud-data-label">{stat.label}</span>
+                            <span className="hud-data-value text-accent">{stat.value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   <div className="info-section">
-                    <span className="section-title">// Active Operations Log</span>
+                    <span className="section-title">// Fictional Operational Record</span>
                     <ul className="bullets-list">
                       {currentMember.operations.map((op, index) => (
                         <li key={index}>{op}</li>
@@ -536,9 +576,9 @@ export default function AgentUI({ onBack }: AgentUIProps) {
           <div className="drawer-body-content">
             <div className="info-header">
               <span className="character-title-role">
-                {mode === 'reality' ? currentMember.position : currentMember.role}
+                {mode === 'reality' ? currentMember.position : currentMember.designation}
               </span>
-              <h2 className="character-main-name" style={{ fontSize: '2rem' }}>
+              <h2 className="character-main-name" style={{ fontSize: '1.8rem' }}>
                 {displayName}
               </h2>
               {mode === 'classified' && (
@@ -584,36 +624,51 @@ export default function AgentUI({ onBack }: AgentUIProps) {
               </>
             ) : (
               <>
-                {currentMember.isPresident && (
-                  <div className="info-section" style={{ borderBottom: '1px dashed rgba(255, 0, 60, 0.15)', paddingBottom: '8px' }}>
-                    <span style={{ fontSize: '0.65rem', color: '#ff3c00', lineHeight: 1.4, display: 'block' }}>
-                      WARNING: The following records contain reconstructed agent profiles generated from ATL personnel data.
-                    </span>
-                  </div>
-                )}
                 <div className="info-section">
-                  <span className="section-title">Agent Dossier</span>
-                  <p className="section-text">{currentMember.dossier}</p>
+                  <span className="section-title">System Introduction</span>
+                  <p className="section-text">"{currentMember.dossier}"</p>
                 </div>
                 <div className="info-section">
-                  <span className="section-title">Specialization</span>
+                  <span className="section-title">Primary Specialization</span>
                   <p className="section-text" style={{ color: 'var(--accent)', fontWeight: 'bold' }}>
                     {currentMember.specialization}
                   </p>
                 </div>
-                <div className="info-section">
-                  <span className="section-title">Tactical Abilities</span>
-                  <div className="abilities-list">
-                    {currentMember.abilities.map((ab, index) => (
-                      <div className="ability-item" key={index}>
-                        <div className="ability-name">{ab.name}</div>
-                        <div className="ability-desc">{ab.description}</div>
-                      </div>
-                    ))}
+                {currentMember.systemStats && currentMember.systemStats.length > 0 && (
+                  <div className="info-section">
+                    <span className="section-title">System Attributes</span>
+                    <div className="grid-section-hud">
+                      {currentMember.systemStats.map((stat, index) => (
+                        <div className="hud-data-item" key={index}>
+                          <span className="hud-data-label">{stat.label}</span>
+                          <span className="hud-data-value text-accent">{stat.value}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
+                {currentMember.operationalProfile && currentMember.operationalProfile.length > 0 && (
+                  <div className="info-section">
+                    <span className="section-title">Operational Profile</span>
+                    <ul className="bullets-list">
+                      {currentMember.operationalProfile.map((item, index) => (
+                        <li key={index}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {currentMember.secondaryCapabilities && currentMember.secondaryCapabilities.length > 0 && (
+                  <div className="info-section">
+                    <span className="section-title">Secondary Capabilities</span>
+                    <div className="skills-container">
+                      {currentMember.secondaryCapabilities.map((cap, index) => (
+                        <span className="skill-tag" key={index}>{cap}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 <div className="info-section">
-                  <span className="section-title">Active Operations</span>
+                  <span className="section-title">Fictional Operational Record</span>
                   <ul className="bullets-list">
                     {currentMember.operations.map((op, index) => (
                       <li key={index}>{op}</li>

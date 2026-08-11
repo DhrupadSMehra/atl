@@ -1,0 +1,11 @@
+{
+  "name": "atl-website-server",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "npm --prefix .. run dev",
+    "server": "tsx server.ts",
+    "start": "tsx server.ts"
+  }
+}
