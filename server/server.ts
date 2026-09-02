@@ -26,7 +26,7 @@ app.use(cors({
     'http://localhost:5173',
     'http://127.0.0.1:5173',
     'http://localhost:5175',
-    'https://atl-webstite-demo.vercel.app',
+    'https://atl-website-demo.vercel.app',
     'https://txatl.sajs.co.in'
   ],
   credentials: true
