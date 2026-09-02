@@ -52,6 +52,12 @@ app.use('/api/staybacks', stayBackRoutes);
 // Mount Community Routes
 app.use('/api/community', communityRoutes);
 
+app.get('/', (_req: Request, res: Response) => {
+  res.json({
+    status: 'ok',
+    service: 'ATL Website Express Backend',
+  });
+});
 // Health check endpoint
 app.get('/api/health', (_req: Request, res: Response) => {
   res.json({
@@ -115,7 +121,7 @@ const startServer = async () => {
   console.log('✓ Static Uploads served at /uploads');
 
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`✓ Server Listening on http://localhost:${PORT}`);
+    console.log(`✓ Server Listening on http://0.0.0.0:${PORT}`);
     console.log('==================================================');
   });
 };
