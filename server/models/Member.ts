@@ -11,7 +11,8 @@ export type DepartmentEnum =
 export type MemberRoleEnum = 'MEMBER' | 'ADMIN';
 
 export interface IMember extends Document {
-  googleId: string;
+  googleId?: string;
+  userId?: mongoose.Types.ObjectId;
   email: string;
   fullName: string;
   studentClass: string;
@@ -26,7 +27,8 @@ export interface IMember extends Document {
 
 const MemberSchema = new Schema<IMember>(
   {
-    googleId: { type: String, required: true, unique: true, index: true },
+    googleId: { type: String, unique: true, sparse: true, index: true },
+    userId: { type: Schema.Types.ObjectId, ref: 'User', sparse: true, index: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     fullName: { type: String, required: true, trim: true },
     studentClass: { type: String, required: true, trim: true },

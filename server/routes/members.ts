@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 import { Member, DepartmentEnum } from '../models/Member';
 import { User } from '../models/User';
 import { verifyToken, AuthRequest } from '../middleware/auth';
@@ -51,6 +52,15 @@ router.post('/verify-password', (req: Request, res: Response) => {
  */
 router.post('/register', async (req: Request, res: Response) => {
   try {
+    if (mongoose.connection.readyState !== 1) {
+      res.status(503).json({
+        success: false,
+        code: 'SERVICE_UNAVAILABLE',
+        error: 'Authentication service temporarily unavailable.'
+      });
+      return;
+    }
+
     const { password, fullName, studentClass, section, contactNumber, department, googleId, email } = req.body;
 
     // Validate Registration Password (SERVER-SIDE ONLY)
@@ -92,10 +102,10 @@ router.post('/register', async (req: Request, res: Response) => {
       return;
     }
 
-    if (!googleId || !email) {
+    if (!email) {
       res.status(400).json({
         success: false,
-        error: 'Google account details (googleId, email) are required for registration.'
+        error: 'Email address is required for registration.'
       });
       return;
     }
@@ -104,24 +114,34 @@ router.post('/register', async (req: Request, res: Response) => {
 
     // Check for existing profile for duplicate prevention
     let existingMember = await Member.findOne({
-      $or: [{ googleId }, { email: cleanEmail }]
+      $or: [
+        ...(googleId ? [{ googleId }] : []),
+        { email: cleanEmail }
+      ]
     });
 
     if (existingMember && existingMember.profileCompleted) {
       res.status(400).json({
         success: false,
-        error: 'An ATL Member profile already exists for this Google account.'
+        error: 'An ATL Member profile already exists for this account.'
       });
       return;
     }
 
     // Check if user has admin role in User collection
-    const userDoc = await User.findOne({ $or: [{ googleId }, { email: cleanEmail }] });
+    const userDoc = await User.findOne({
+      $or: [
+        ...(googleId ? [{ googleId }] : []),
+        { email: cleanEmail }
+      ]
+    });
     const isUserAdmin = userDoc?.role === 'admin';
     const memberRole = isUserAdmin ? 'ADMIN' : 'MEMBER';
 
     let member: any;
     if (existingMember) {
+      if (googleId && !existingMember.googleId) existingMember.googleId = googleId;
+      if (userDoc?._id && !existingMember.userId) existingMember.userId = userDoc._id;
       existingMember.fullName = String(fullName).trim();
       existingMember.studentClass = String(studentClass).trim();
       existingMember.section = String(section).trim();
@@ -131,8 +151,7 @@ router.post('/register', async (req: Request, res: Response) => {
       existingMember.profileCompleted = true;
       member = await existingMember.save();
     } else {
-      member = await Member.create({
-        googleId,
+      const newMemberData: any = {
         email: cleanEmail,
         fullName: String(fullName).trim(),
         studentClass: String(studentClass).trim(),
@@ -141,7 +160,10 @@ router.post('/register', async (req: Request, res: Response) => {
         department: upperDept,
         role: memberRole,
         profileCompleted: true
-      });
+      };
+      if (googleId) newMemberData.googleId = googleId;
+      if (userDoc?._id) newMemberData.userId = userDoc._id;
+      member = await Member.create(newMemberData);
     }
 
     // Issue JWT token containing member details

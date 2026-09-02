@@ -254,28 +254,102 @@ router.post('/register', async (req: Request, res: Response): Promise<void> => {
  */
 router.post('/login', async (req: Request, res: Response): Promise<void> => {
   try {
+    if (mongoose.connection.readyState !== 1) {
+      res.status(503).json({
+        success: false,
+        code: 'SERVICE_UNAVAILABLE',
+        error: 'Authentication service temporarily unavailable.'
+      });
+      return;
+    }
+
     const { email, password } = req.body;
     if (!email || !password) {
       res.status(400).json({ success: false, error: 'Email and password are required.' });
       return;
     }
 
-    const user = await User.findOne({ email: email.toLowerCase() });
-    if (!user || !user.passwordHash) {
+    const cleanEmail = String(email).trim().toLowerCase();
+    const cleanPassword = String(password).trim();
+
+    if (!cleanEmail || !cleanPassword) {
+      res.status(400).json({ success: false, error: 'Email and password are required.' });
+      return;
+    }
+
+    let user = await User.findOne({ email: cleanEmail });
+    let memberDoc = await Member.findOne({ email: cleanEmail });
+
+    if (!user && !memberDoc) {
       res.status(401).json({ success: false, error: 'Invalid email or password.' });
       return;
     }
 
-    if (user.isBanned) {
+    if (user?.isBanned) {
       res.status(403).json({ success: false, error: 'Your account has been banned by a moderator.' });
       return;
     }
 
-    const isMatch = await bcrypt.compare(password, user.passwordHash);
-    if (!isMatch) {
+    const memberBootstrapPassword = process.env.ATL_MEMBER_REGISTRATION_PASSWORD || 'atl_member_pass_2026';
+    let isMatch = false;
+
+    // 1. If User has an initialized passwordHash, verify with bcrypt
+    if (user?.passwordHash) {
+      isMatch = await bcrypt.compare(cleanPassword, user.passwordHash);
+    }
+
+    // 2. If the backend member account exists (in Member collection) but has no initialized User password hash:
+    // verify against the designated backend member bootstrap credential (ATL_MEMBER_REGISTRATION_PASSWORD)
+    if (!isMatch && memberDoc && (!user || !user.passwordHash)) {
+      if (memberBootstrapPassword && cleanPassword === String(memberBootstrapPassword).trim()) {
+        isMatch = true;
+
+        // Hash and persist the password, create or update User account
+        const newHash = await bcrypt.hash(cleanPassword, 10);
+        if (user) {
+          user.passwordHash = newHash;
+          if (!user.name && memberDoc.fullName) user.name = memberDoc.fullName;
+          await user.save();
+        } else {
+          user = await User.create({
+            email: cleanEmail,
+            name: memberDoc.fullName || 'ATL Member',
+            passwordHash: newHash,
+            role: memberDoc.role === 'ADMIN' ? 'admin' : 'viewer',
+            googleId: memberDoc.googleId
+          });
+        }
+      }
+    }
+
+    if (!isMatch || !user) {
       res.status(401).json({ success: false, error: 'Invalid email or password.' });
       return;
     }
+
+    if (!memberDoc) {
+      memberDoc = await Member.findOne({
+        $or: [
+          ...(user.googleId ? [{ googleId: user.googleId }] : []),
+          { email: cleanEmail }
+        ]
+      });
+    }
+
+    const memberData = memberDoc && memberDoc.profileCompleted ? {
+      memberId: memberDoc._id.toString(),
+      googleId: memberDoc.googleId,
+      email: memberDoc.email,
+      fullName: memberDoc.fullName,
+      studentClass: memberDoc.studentClass,
+      section: memberDoc.section,
+      contactNumber: memberDoc.contactNumber,
+      department: memberDoc.department,
+      role: memberDoc.role,
+      profileCompleted: memberDoc.profileCompleted,
+      createdAt: memberDoc.createdAt,
+      updatedAt: memberDoc.updatedAt
+    } : null;
 
     const token = generateToken({
       id: user._id.toString(),
@@ -290,17 +364,40 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
       token,
       user: {
         id: user._id.toString(),
+        googleId: user.googleId,
         email: user.email,
         name: user.name,
+        profilePicture: user.profilePicture,
         role: user.role,
         adminProfile: user.adminProfile
       },
       isExistingAdmin: user.role === 'admin',
-      hasMemberProfile: false // simplified for normal login
+      member: memberData,
+      hasMemberProfile: !!memberData
     });
   } catch (error: any) {
     res.status(500).json({ success: false, error: error.message });
   }
+});
+
+/**
+ * 4b. Viewer Guest Endpoint
+ */
+router.post('/viewer-guest', async (_req: Request, res: Response): Promise<void> => {
+  const guestUser = {
+    id: `guest_${Date.now()}`,
+    email: 'guest@atl.labs',
+    name: 'ATL Explorer',
+    role: 'viewer' as const
+  };
+  const token = generateToken(guestUser);
+  res.json({
+    success: true,
+    token,
+    user: guestUser,
+    isExistingAdmin: false,
+    hasMemberProfile: false
+  });
 });
 
 /**
