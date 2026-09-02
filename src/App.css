@@ -992,35 +992,10 @@
     box-sizing: border-box;
   }
 
+  /* Hide desktop-only game-header and RETURN_TO_HUB button on mobile.
+     The unified UserBar mobile header handles navigation via [TINKETHIX] and the centered mode switch. */
   .game-header {
-    padding: 10px 14px;
-    gap: 8px;
-    justify-content: space-between;
-  }
-  .game-header-controls-left {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    gap: 8px;
-  }
-  .game-header-controls-left .desktop-only-switch {
     display: none !important;
-  }
-  .game-header-right-clearance {
-    display: none;
-  }
-  .toggle-switch-wrapper {
-    width: 165px;
-    height: 32px;
-  }
-  .toggle-button {
-    font-size: 0.65rem;
-  }
-  .agent-back-btn {
-    position: static !important;
-    font-size: 0.68rem;
-    padding: 6px 12px;
-    z-index: 10;
   }
   .bottom-roster-region {
     position: fixed;

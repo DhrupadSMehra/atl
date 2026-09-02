@@ -210,28 +210,30 @@ export const UserBar: React.FC<UserBarProps> = ({
             </button>
           </div>
 
-          {/* CENTER: REALITY / CLASSIFIED Toggle Switch */}
-          <div className="mobile-header-center">
-            <div className="toggle-switch-wrapper mobile-compact">
-              <div className={`toggle-active-bg ${dossierMode === 'classified' ? 'active-classified' : ''}`} />
-              <button
-                type="button"
-                className={`toggle-button ${dossierMode === 'reality' ? 'active' : ''}`}
-                onClick={() => onToggleDossierMode && onToggleDossierMode('reality')}
-                aria-label="Switch to Reality Mode"
-              >
-                REALITY
-              </button>
-              <button
-                type="button"
-                className={`toggle-button ${dossierMode === 'classified' ? 'active' : ''}`}
-                onClick={() => onToggleDossierMode && onToggleDossierMode('classified')}
-                aria-label="Switch to Classified Mode"
-              >
-                CLASSIFIED
-              </button>
+          {/* CENTER: REALITY / CLASSIFIED Toggle Switch — ONLY VISIBLE ON TEAM/DOSSIER */}
+          {currentView === 'team' && (
+            <div className="mobile-header-center">
+              <div className="toggle-switch-wrapper mobile-compact">
+                <div className={`toggle-active-bg ${dossierMode === 'classified' ? 'active-classified' : ''}`} />
+                <button
+                  type="button"
+                  className={`toggle-button ${dossierMode === 'reality' ? 'active' : ''}`}
+                  onClick={() => onToggleDossierMode && onToggleDossierMode('reality')}
+                  aria-label="Switch to Reality Mode"
+                >
+                  REALITY
+                </button>
+                <button
+                  type="button"
+                  className={`toggle-button ${dossierMode === 'classified' ? 'active' : ''}`}
+                  onClick={() => onToggleDossierMode && onToggleDossierMode('classified')}
+                  aria-label="Switch to Classified Mode"
+                >
+                  CLASSIFIED
+                </button>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* RIGHT: Avatar + Name ONLY (Clicking opens compact popover menu) */}
           <div className="mobile-header-right">
