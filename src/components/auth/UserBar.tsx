@@ -193,19 +193,19 @@ export const UserBar: React.FC<UserBarProps> = ({
 
       {/* ── MOBILE HEADER + NAVIGATION WRAPPER (<= 768px) ───────────────── */}
       <div className="user-bar-mobile-wrapper" role="banner">
-        {/* 1. Primary Header with 3 Deliberate Regions: [TINKETHIX] [SWITCH] [USER] */}
+        {/* 1. Primary Header with 3 Deliberate Regions: [tinkEthix] [SWITCH] [USER] */}
         <div className="user-bar-mobile-header">
-          {/* LEFT: TINKETHIX Identity */}
+          {/* LEFT: tinkEthix Identity */}
           <div className="mobile-header-left">
             <button
               type="button"
               className="mobile-site-brand"
               onClick={onNavigateHome}
               title="Return to Hub"
-              aria-label="TINKETHIX Home"
+              aria-label="tinkEthix Home"
             >
               <span className="mobile-brand-bracket">[</span>
-              <span className="mobile-brand-title">TINKETHIX</span>
+              <span className="mobile-brand-title">tinkEthix</span>
               <span className="mobile-brand-bracket">]</span>
             </button>
           </div>

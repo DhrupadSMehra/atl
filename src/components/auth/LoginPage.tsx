@@ -58,14 +58,20 @@ export const LoginPage: React.FC = () => {
         body: JSON.stringify(body)
       });
       
-      const data = await res.json();
-      if (data.success) {
+      const data = await res.json().catch(() => null);
+      if (res.ok && data?.success) {
         handleLoginSuccess(data);
+      } else if (res.status === 503 || data?.code === 'SERVICE_UNAVAILABLE') {
+        setError('Authentication service temporarily unavailable.');
+      } else if (res.status === 401) {
+        setError('Invalid email or password.');
+      } else if (res.status === 400 && data?.error) {
+        setError(data.error);
       } else {
-        setError(data.error || 'Authentication failed');
+        setError(data?.error || 'Unable to complete login. Please try again.');
       }
     } catch (err: any) {
-      setError(err.message || 'Network error');
+      setError('Unable to complete login. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -115,7 +121,7 @@ export const LoginPage: React.FC = () => {
 
           <h1 className="auth-heading">
             <span className="auth-brand-bracket">[</span>
-            <span className="auth-brand-name">TINKETHIX</span>
+            <span className="auth-brand-name">tinkEthix</span>
             <span className="auth-brand-bracket">]</span>
           </h1>
 

@@ -105,7 +105,7 @@ export const MyProfileModal: React.FC<MyProfileModalProps> = ({ isOpen, onClose 
             <div>
               <h2 className="profile-modal-title">{member ? 'My Member Profile' : 'My Account Profile'}</h2>
               <p className="profile-modal-subtitle">
-                {member ? 'View and update your Tinkethix profile details' : 'Authenticated session information'}
+                {member ? 'View and update your tinkEthix profile details' : 'Authenticated session information'}
               </p>
             </div>
             <button type="button" className="profile-close-btn" onClick={onClose} aria-label="Close">

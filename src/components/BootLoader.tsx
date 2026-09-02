@@ -54,27 +54,27 @@ export default function BootLoader({ onComplete }: BootLoaderProps) {
                 <svg viewBox="0 0 40 40" width="42" height="42" fill="none">
                   <polygon
                     points="20,2 37,11 37,29 20,38 3,29 3,11"
-                    stroke="#2563eb"
+                    stroke="#00FF66"
                     strokeWidth="1.5"
                     fill="none"
                   />
                   <polygon
                     points="20,8 31,14 31,26 20,32 9,26 9,14"
-                    stroke="#2563eb"
+                    stroke="#00FF66"
                     strokeWidth="0.8"
                     strokeDasharray="3 2"
                     opacity="0.35"
                     fill="none"
                   />
-                  <circle cx="20" cy="20" r="4.5" fill="#2563eb" />
+                  <circle cx="20" cy="20" r="4.5" fill="#00FF66" />
                 </svg>
               </div>
-              <div className="boot-logo-wordmark">TINKERTHIX</div>
+              <div className="boot-logo-wordmark">tinkEthix</div>
             </div>
 
             {/* Message */}
             <p className="boot-message">
-              Initializing TinkerThix Research Portal...
+              Initializing tinkEthix Research Portal...
             </p>
 
             {/* Progress bar */}

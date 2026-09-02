@@ -25,7 +25,7 @@ export interface IAdminProfile {
 
 export interface UserSession {
   id: string;
-  googleId: string;
+  googleId?: string;
   email: string;
   name: string;
   profilePicture?: string;
@@ -35,7 +35,8 @@ export interface UserSession {
 
 export interface IMemberProfile {
   memberId: string;
-  googleId: string;
+  googleId?: string;
+  userId?: string;
   email: string;
   fullName: string;
   studentClass: string;
@@ -73,7 +74,7 @@ interface AuthContextType {
   isPendingRegistration: boolean;
   isPendingAdminSetup: boolean;
   isAdminUnlockedByPass: boolean;
-  pendingGoogleAccount: { googleId: string; email: string; name: string; profilePicture?: string } | null;
+  pendingGoogleAccount: { googleId?: string; email: string; name: string; profilePicture?: string } | null;
   handleGoogleSuccess: (tokenPayload: { access_token?: string; credential?: string }) => Promise<void>;
   handleLoginSuccess: (data: any) => void;
   verifyRegistrationPassword: (password: string) => Promise<{ success: boolean; error?: string }>;
@@ -172,7 +173,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isAdminUnlockedByPass, setIsAdminUnlockedByPass] = useState(false);
   const [isPendingAdminSetup, setIsPendingAdminSetup] = useState(false);
   const [isPendingRegistration, setIsPendingRegistration] = useState(false);
-  const [pendingGoogleAccount, setPendingGoogleAccount] = useState<{ googleId: string; email: string; name: string; profilePicture?: string } | null>(null);
+  const [pendingGoogleAccount, setPendingGoogleAccount] = useState<{ googleId?: string; email: string; name: string; profilePicture?: string } | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -342,21 +343,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
     }
     
-    // For email/password registration, skip the member registration flow if they are not Google users, or we can just let them pass as viewers
-    setIsPendingRegistration(false);
+    // Member profile incomplete or missing — converge into the shared ATLRegistrationFlow overlay!
+    setPendingGoogleAccount({
+      googleId: data.user.googleId,
+      email: data.user.email,
+      name: data.user.name,
+      profilePicture: data.user.profilePicture || ''
+    });
+    setIsPendingRegistration(true);
   };
 
   // Complete Member Profile Registration
   const completeMemberRegistration = async (payload: MemberRegistrationPayload) => {
-    if (!pendingGoogleAccount) {
-      throw new Error('No Google account session found for registration.');
+    const accountEmail = pendingGoogleAccount?.email || user?.email;
+    if (!accountEmail) {
+      throw new Error('No active user account session found for registration.');
     }
 
-    const fullPayload = {
+    const fullPayload: any = {
       ...payload,
-      googleId: pendingGoogleAccount.googleId,
-      email: pendingGoogleAccount.email
+      email: accountEmail
     };
+
+    const effectiveGoogleId = pendingGoogleAccount?.googleId || user?.googleId;
+    if (effectiveGoogleId) {
+      fullPayload.googleId = effectiveGoogleId;
+    }
 
     const { ok, error, data } = await safeFetchJson('/api/members/register', {
       method: 'POST',

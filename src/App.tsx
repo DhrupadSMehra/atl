@@ -1,5 +1,5 @@
 /**
- * App.tsx — TinkerThix Root Router
+ * App.tsx — tinkEthix Root Router
  *
  * State-based navigation: 'booting' → 'landing' → 'team' | 'notices'
  *
@@ -159,7 +159,7 @@ const RoboticsSchematics = () => (
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const TerminalHeader = ({ onNavigateTeam }: { onNavigateTeam: () => void }) => {
   const [typed, setTyped] = useState("");
-  const targetText = "root@tinkerthix:~# ./initialize_research_portal";
+  const targetText = "root@tinkethix:~# ./initialize_research_portal";
 
   useEffect(() => {
     let index = 0;
@@ -229,13 +229,13 @@ const DEPARTMENTS = [
   {
     id: 'tech', label: 'Technical', code: 'DIV-ALPHA', members: 4, angle: -90,
     focus: 'Specializing in ROS 2 node architecture, custom PCB fabrication, multi-terrain kinetic locomotion solvers, and real-time autonomous computer vision tracking using customized OpenCV processing pipelines.',
-    details: 'The Technical division handles the core engineering of TinkerThix. From bare-metal firmware and custom printed circuit boards to high-level SLAM and reinforcement learning algorithms, this team ensures that every robot functions with precision and reliability in unstructured environments.',
+    details: 'The Technical division handles the core engineering of tinkEthix. From bare-metal firmware and custom printed circuit boards to high-level SLAM and reinforcement learning algorithms, this team ensures that every robot functions with precision and reliability in unstructured environments.',
     stack: ['Robotics', 'ROS 2', 'Embedded Systems', 'Computer Vision']
   },
   {
     id: 'creative', label: 'Creative', code: 'DIV-BETA', members: 2, angle: -30,
     focus: 'Specializing in fine arts, concept sketching, visual aesthetics, and physical crafting to conceptualize and bring artistic flair to our robotic designs.',
-    details: 'The Creative team is the artistic soul of TinkerThix. Using traditional fine arts techniques, they brainstorm and sketch initial robot concepts, paint and finish physical chassis parts, and craft visual elements that make our robots stand out. They rely on imagination and hands-on artistry rather than complex CAD software.',
+    details: 'The Creative team is the artistic soul of tinkEthix. Using traditional fine arts techniques, they brainstorm and sketch initial robot concepts, paint and finish physical chassis parts, and craft visual elements that make our robots stand out. They rely on imagination and hands-on artistry rather than complex CAD software.',
     stack: ['Fine Arts', 'Sketching', 'Painting', 'Concept Art']
   },
   {
@@ -247,13 +247,13 @@ const DEPARTMENTS = [
   {
     id: 'marketing', label: 'Marketing', code: 'DIV-DELTA', members: 2, angle: 90,
     focus: 'Orchestrating strategic institutional positioning vectors, managing external sponsorship matrix channels, and tracking algorithmic outreach analytics to scale our ecosystem\'s reach.',
-    details: 'Marketing handles the external face of TinkerThix. They craft pitch decks for potential sponsors, write press releases for our achievements, and design our public-facing materials. Their strategic outreach ensures that our research receives the funding and recognition it deserves.',
+    details: 'Marketing handles the external face of tinkEthix. They craft pitch decks for potential sponsors, write press releases for our achievements, and design our public-facing materials. Their strategic outreach ensures that our research receives the funding and recognition it deserves.',
     stack: ['Sponsorships', 'Pitching', 'Outreach', 'Branding']
   },
   {
     id: 'social', label: 'Social Media', code: 'DIV-EPSILON', members: 2, angle: 150,
     focus: 'Architecting our digital footprint layout, managing rapid micro-content deployment pipelines, and analyzing high-frequency user engagement metrics across active media handles.',
-    details: 'This division operates our digital presence on platforms like Instagram and LinkedIn. They transform complex engineering milestones into engaging, bite-sized content, fostering a community of robotics enthusiasts and ensuring the world stays updated on TinkerThix operations.',
+    details: 'This division operates our digital presence on platforms like Instagram and LinkedIn. They transform complex engineering milestones into engaging, bite-sized content, fostering a community of robotics enthusiasts and ensuring the world stays updated on tinkEthix operations.',
     stack: ['Content Creation', 'Engagement', 'Analytics', 'Digital Presence']
   },
   {
@@ -1375,7 +1375,7 @@ const HeroIntro = ({ onNavigateTeam, onNavigateNotices }: { onNavigateTeam: () =
 
       <div className="landing-hero-content">
         <div className="landing-hero-top-labels">
-          <span className="landing-hero-label">[ORG: TINKERTHIX]</span>
+          <span className="landing-hero-label">[ORG: tinkEthix]</span>
           <span className="landing-hero-label">[LOC: SETH_ANANDRAM_JAIPURIA]</span>
         </div>
 

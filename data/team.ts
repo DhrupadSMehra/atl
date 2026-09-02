@@ -129,10 +129,10 @@ export const teamData: TeamMember[] = [
     position: "Technical Head",
     realName: "Chaitanya Rajput",
     realPhoto: "/members/real/chateniya.png",
-    bio: "Hey! I’m Chaitanya Rajput, a Class 11 Commerce student and the Technical Head at ATL TinkEthix. I’m passionate about robotics, technology, AI, entrepreneurship, and the world of commerce and business. I enjoy exploring business strategies and understanding how technology and innovation can create real-world impact. Through my work in robotics, I’ve developed skills in hardware development, electronics, 3D design, and problem-solving. Outside academics and technology, I also enjoy playing volleyball. I’m always eager to learn, take on new challenges, and build innovative solutions.",
+    bio: "Hey! I’m Chaitanya Rajput, a Class 11 Commerce student and the Technical Head at ATL tinkEthix. I’m passionate about robotics, technology, AI, entrepreneurship, and the world of commerce and business. I enjoy exploring business strategies and understanding how technology and innovation can create real-world impact. Through my work in robotics, I’ve developed skills in hardware development, electronics, 3D design, and problem-solving. Outside academics and technology, I also enjoy playing volleyball. I’m always eager to learn, take on new challenges, and build innovative solutions.",
     skills: ["Robotics", "Electronics", "3D Design & Printing", "Embedded Systems", "Hardware Integration", "Circuit Design", "Problem Solving"],
     achievements: [
-      "Technical Head, ATL TinkEthix",
+      "Technical Head, ATL tinkEthix",
       "Leading and contributing to innovative robotics and technology projects",
       "Experienced in electronics, 3D design and printing, embedded systems, and robotics",
       "Contributed to technical planning, circuit design, hardware integration, and project development",
@@ -157,7 +157,7 @@ export const teamData: TeamMember[] = [
       { label: "HARDWARE RESILIENCE", value: "98%" },
       { label: "LATENCY", value: "04ms" }
     ],
-    operations: ["TinkEthix Hardware Forge", "CBSE Cluster Overdrive", "Project Sub-Grid Forge"],
+    operations: ["tinkEthix Hardware Forge", "CBSE Cluster Overdrive", "Project Sub-Grid Forge"],
     threatAssessment: "HIGH",
     role: "Hardware Systems & Robotics Operative",
     abilities: [
@@ -253,10 +253,10 @@ export const teamData: TeamMember[] = [
     position: "Creative Head",
     realName: "Rayna Vishnoi",
     realPhoto: "/members/real/rayna.png",
-    bio: "Greetings! I am Rayna Vishnoi, the Creative Head at ATL TinkEthix 2026. With a strong interest in design, visual communication, and creative development, I focus on transforming ideas into purposeful and engaging visual concepts. In my role, I contribute to shaping the club’s creative direction while encouraging innovation, collaboration, and a distinct visual identity.",
+    bio: "Greetings! I am Rayna Vishnoi, the Creative Head at ATL tinkEthix 2026. With a strong interest in design, visual communication, and creative development, I focus on transforming ideas into purposeful and engaging visual concepts. In my role, I contribute to shaping the club’s creative direction while encouraging innovation, collaboration, and a distinct visual identity.",
     skills: ["Design", "Visual Communication", "Creative Development", "Event Planning", "Event Execution"],
     achievements: [
-      "Creative Head, ATL TinkEthix",
+      "Creative Head, ATL tinkEthix",
       "Creative Team Backend Member at ATL, Melange 2025",
       "Contributed to creative planning, design, and event execution",
       "Assisted in organising the Human Library event, engaging and interacting with participants and speakers to facilitate a welcoming experience"
@@ -295,10 +295,10 @@ export const teamData: TeamMember[] = [
     position: "Marketing Head",
     realName: "Anika Dang",
     realPhoto: "/members/real/anika.png",
-    bio: "I’m Anika Dang, a student of Class 11 Humanities. I’m the Marketing Head at ATL TinkEthix, where I’m involved in promoting and managing creative and innovative projects. I’m passionate about music, singing, painting and exploring new ideas. I love taking on new challenges, learning new skills, and expressing my creativity in different ways.",
+    bio: "I’m Anika Dang, a student of Class 11 Humanities. I’m the Marketing Head at ATL tinkEthix, where I’m involved in promoting and managing creative and innovative projects. I’m passionate about music, singing, painting and exploring new ideas. I love taking on new challenges, learning new skills, and expressing my creativity in different ways.",
     skills: ["Marketing", "Event Planning", "Outreach", "Social Media", "Audience & Event Management"],
     achievements: [
-      "Marketing Head, ATL TinkEthix",
+      "Marketing Head, ATL tinkEthix",
       "Creative Backend Team Member for 2 years (TinkerFest 2023 and 2024, Melange 2023, and Compufest 2024)",
       "Social Media Head, AUREL MUN",
       "Contributed to event planning, execution, outreach, audience and event management"
@@ -337,10 +337,10 @@ export const teamData: TeamMember[] = [
     position: "Marketing Head",
     realName: "Bhavya Anand",
     realPhoto: "/members/real/bhavya.png",
-    bio: "Hey! I’m Bhavya, a Class 11 Commerce student and the Marketing Head at ATL TinkEthix. I’m passionate about communication, marketing, creative problem-solving, and bringing people together around ideas. My experience with ATL TinkerFest, from backend planning and creative execution to anchoring and on-ground coordination, has helped me understand how ideas translate into engaging experiences. As Marketing Head, I’m excited to combine strategy, creativity, and teamwork to strengthen ATL’s outreach and make its initiatives reach a wider audience.",
+    bio: "Hey! I’m Bhavya, a Class 11 Commerce student and the Marketing Head at ATL tinkEthix. I’m passionate about communication, marketing, creative problem-solving, and bringing people together around ideas. My experience with ATL TinkerFest, from backend planning and creative execution to anchoring and on-ground coordination, has helped me understand how ideas translate into engaging experiences. As Marketing Head, I’m excited to combine strategy, creativity, and teamwork to strengthen ATL’s outreach and make its initiatives reach a wider audience.",
     skills: ["Marketing", "Communication", "Event Operations", "Anchoring", "IT & Design", "Problem Solving"],
     achievements: [
-      "Marketing Head, ATL TinkEthix",
+      "Marketing Head, ATL tinkEthix",
       "Creative Team Member & Anchor, ATL TinkerFest 2024",
       "Contributed to backend planning, event execution, outreach, and audience engagement",
       "Marketing Head, EcoBricks NCR",
@@ -423,10 +423,10 @@ export const teamData: TeamMember[] = [
     position: "Head of Social Media",
     realName: "Samridhi Agarwal",
     realPhoto: "/members/real/samriddhi.png",
-    bio: "Hey! I’m Samridhi Agarwal, the Head of Social Media at ATL TinkEthix. I’m someone who loves creativity, communication, and turning simple ideas into engaging content. I enjoy exploring new concepts, keeping up with trends, and finding unique ways to represent the team and its work. Being part of the social media team gives me the opportunity to combine creativity with strategy and create content that connects with people.",
+    bio: "Hey! I’m Samridhi Agarwal, the Head of Social Media at ATL tinkEthix. I’m someone who loves creativity, communication, and turning simple ideas into engaging content. I enjoy exploring new concepts, keeping up with trends, and finding unique ways to represent the team and its work. Being part of the social media team gives me the opportunity to combine creativity with strategy and create content that connects with people.",
     skills: ["Social Media Strategy", "Content Creation", "Digital Presence", "Communication", "Trend Analysis"],
     achievements: [
-      "Head of Social Media at ATL TinkEthix",
+      "Head of Social Media at ATL tinkEthix",
       "Leading the team’s social media strategy, content, and digital presence"
     ],
     codename: "PULSE",
@@ -448,7 +448,7 @@ export const teamData: TeamMember[] = [
       { label: "VIRAL SYNCHRONIZATION", value: "94%" },
       { label: "LATENCY", value: "03ms" }
     ],
-    operations: ["TinkEthix Digital Shift", "Social Grid Alpha", "Project Wave Injection"],
+    operations: ["tinkEthix Digital Shift", "Social Grid Alpha", "Project Wave Injection"],
     threatAssessment: "MEDIUM",
     role: "Digital Media & Trends Operative",
     abilities: [

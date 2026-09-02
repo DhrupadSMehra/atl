@@ -1,4 +1,4 @@
-// hub-data.ts — TinkerThix Hub Static Data Layer
+// hub-data.ts — tinkEthix Hub Static Data Layer
 
 export interface Project {
   id: string;
@@ -146,7 +146,7 @@ export const eventsData: Event[] = [
     id: 'evt-004',
     date: '2025 MAR 07',
     epoch: 'T-0119',
-    title: 'TinkerThix Internal Research Benchmark v1',
+    title: 'tinkEthix Internal Research Benchmark v1',
     type: 'BENCHMARK',
     location: 'Jaipuria ATL Lab',
     outcome: 'HEXAPOD-ALPHA: 87% Gait Efficiency',
@@ -166,7 +166,7 @@ export const eventsData: Event[] = [
     id: 'evt-006',
     date: '2025 JUL 18',
     epoch: 'T+033',
-    title: 'TinkerThix v2.0 System Deployment',
+    title: 'tinkEthix v2.0 System Deployment',
     type: 'DEPLOYMENT',
     location: 'ATL Command Lab — Internal',
     outcome: 'SCHEDULED — MAINFRAME UPGRADE',
@@ -235,7 +235,7 @@ export const departmentsData: Department[] = [
     lead: 'TBD',
     systems: ['Firmware Dev', 'PCB Design', 'CAN Bus', 'RTOS'],
     activeNodes: 3,
-    description: 'Builds the electronic nervous system of every TinkerThix machine. From custom PCBs to bare-metal firmware, this division runs the hardware layer.',
+    description: 'Builds the electronic nervous system of every tinkEthix machine. From custom PCBs to bare-metal firmware, this division runs the hardware layer.',
     detailedDescription: 'The Embedded Systems team bridges the gap between software algorithms and physical hardware. They design custom printed circuit boards (PCBs), develop low-latency real-time operating system (RTOS) firmware, and implement robust communication protocols like CAN bus and SPI. Their work ensures that sensor data and actuator commands are processed with microsecond precision.',
     icon: '⬢',
   },
@@ -246,8 +246,8 @@ export const departmentsData: Department[] = [
     lead: 'TBD',
     systems: ['Systems Design', 'API Infrastructure', 'DevOps', 'Toolchains'],
     activeNodes: 2,
-    description: 'Maintains the software backbone of TinkerThix operations — internal tooling, simulation environments, compilers, and the digital infrastructure layer.',
-    detailedDescription: 'Responsible for the overarching digital infrastructure, this division builds and maintains the core software systems that power TinkerThix. They develop custom simulation environments, continuous integration/continuous deployment (CI/CD) pipelines for robotic code, and internal telemetry dashboards. They ensure all codebases are scalable, secure, and maintainable.',
+    description: 'Maintains the software backbone of tinkEthix operations — internal tooling, simulation environments, compilers, and the digital infrastructure layer.',
+    detailedDescription: 'Responsible for the overarching digital infrastructure, this division builds and maintains the core software systems that power tinkEthix. They develop custom simulation environments, continuous integration/continuous deployment (CI/CD) pipelines for robotic code, and internal telemetry dashboards. They ensure all codebases are scalable, secure, and maintainable.',
     icon: '◇',
   },
   {
@@ -257,8 +257,8 @@ export const departmentsData: Department[] = [
     lead: 'TBD',
     systems: ['Technical Writing', 'Research Papers', 'IP Management', 'Benchmarking'],
     activeNodes: 2,
-    description: 'Converts engineering breakthroughs into publishable research, patent filings, and competitive documentation. The institutional knowledge archive of TinkerThix.',
-    detailedDescription: 'The Research & Documentation division is the intellectual hub of TinkerThix. They translate engineering successes into comprehensive technical reports, white papers, and presentation materials. This team manages our institutional knowledge, oversees competitive benchmarking, and ensures our methodologies are meticulously documented for future reference and external publication.',
+    description: 'Converts engineering breakthroughs into publishable research, patent filings, and competitive documentation. The institutional knowledge archive of tinkEthix.',
+    detailedDescription: 'The Research & Documentation division is the intellectual hub of tinkEthix. They translate engineering successes into comprehensive technical reports, white papers, and presentation materials. This team manages our institutional knowledge, oversees competitive benchmarking, and ensures our methodologies are meticulously documented for future reference and external publication.',
     icon: '▣',
   },
 ];

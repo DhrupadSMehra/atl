@@ -68,7 +68,7 @@ export default function Hub({ onNavigate }: HubProps) {
               </svg>
             </div>
             <div>
-              <div className="hub-logo-name">TINKERTHIX</div>
+              <div className="hub-logo-name">tinkEthix</div>
               <div className="hub-logo-sub">
                 Advanced Robotics &amp; Engineering Research Collective
               </div>
@@ -128,7 +128,7 @@ export default function Hub({ onNavigate }: HubProps) {
             </h1>
 
             <p className="hub-hero-body">
-              TinkerThix is an elite research collective of young engineers and scientists
+              tinkEthix is an elite research collective of young engineers and scientists
               pushing the frontiers of autonomous systems, machine intelligence, and
               embedded robotics at the secondary school level.
             </p>
@@ -174,7 +174,7 @@ export default function Hub({ onNavigate }: HubProps) {
         <section className="hub-gateway-section" aria-labelledby="gateway-heading">
           <div className="hub-gateway-eyebrow">Portal Access</div>
           <h2 id="gateway-heading" className="hub-gateway-title">
-            Explore the TinkerThix Network
+            Explore the tinkEthix Network
           </h2>
           <p className="hub-gateway-sub">
             Access detailed personnel profiles or navigate the full
@@ -244,7 +244,7 @@ export default function Hub({ onNavigate }: HubProps) {
       {/* ── FOOTER ── */}
       <footer className="hub-footer">
         <div className="hub-footer-inner">
-          <div className="hub-footer-brand">TINKERTHIX</div>
+          <div className="hub-footer-brand">tinkEthix</div>
           <div className="hub-footer-info">
             Seth Anandram Jaipuria School, Ghaziabad · Atal Tinkering Lab
           </div>

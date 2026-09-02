@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   landing.css — TinkerThix "Monochrome Technical" Landing Page
+   landing.css — tinkEthix "Monochrome Technical" Landing Page
    Scope: ONLY loaded by LandingPage component inside App.tsx.
    All classes are prefixed with .landing- to guarantee zero bleed.
    Palette: Pure Black #000 · Graphite #1C1C1E · Brilliant White #FFF
@@ -268,7 +268,7 @@
 
 .landing-hero-phase2 {
   font-family: 'Outfit', sans-serif;
-  font-size: clamp(3rem, 10vw, 8rem);
+  font-size: clamp(2.4rem, 10.5vw, 8rem);
   font-weight: 900;
   color: #ffffff;
   line-height: 1;

@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   App.css — TinkerThix Team Dossier System (Valorant-Style)
+   App.css — tinkEthix Team Dossier System (Valorant-Style)
    Scope: ONLY loaded by AgentUI.tsx. Do NOT import this in landing page code.
    Palette: Deep Navy/Black + Cyan (Reality) / Tactical Black + Crimson (Classified)
 ═══════════════════════════════════════════════════════════════════════════ */
@@ -993,7 +993,7 @@
   }
 
   /* Hide desktop-only game-header and RETURN_TO_HUB button on mobile.
-     The unified UserBar mobile header handles navigation via [TINKETHIX] and the centered mode switch. */
+     The unified UserBar mobile header handles navigation via [tinkEthix] and the centered mode switch. */
   .game-header {
     display: none !important;
   }

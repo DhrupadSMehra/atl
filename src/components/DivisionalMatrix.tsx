@@ -31,7 +31,7 @@ export default function DivisionalMatrix({ onClose }: DivisionalMatrixProps) {
         <div className="matrix-modal-header">
           <div>
             <div className="matrix-modal-label">Structural Overview</div>
-            <h2 className="matrix-modal-title">TinkerThix Departments</h2>
+            <h2 className="matrix-modal-title">tinkEthix Departments</h2>
             <p className="matrix-modal-sub">
               {departmentsData.length} specialized divisions ·{' '}
               {departmentsData.reduce((a, d) => a + d.activeNodes, 0)} active researchers
