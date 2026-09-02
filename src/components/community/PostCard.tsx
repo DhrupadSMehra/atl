@@ -139,11 +139,26 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onClick, onUpvoteToggl
         {/* Image thumbnail strip */}
         {hasImages && (
           <div className="post-image-strip">
-            {post.images.slice(0, 3).map((img: string, i: number) => (
-              <div className="post-image-thumb" key={i}>
-                <img src={img.startsWith('http') ? img : `${API_URL}${img}`} alt={`Post image ${i + 1}`} />
-              </div>
-            ))}
+            {post.images.slice(0, 3).map((img: string, i: number) => {
+              const cleanPath = img.startsWith('/') ? img : `/${img}`;
+              const initialSrc = img.startsWith('http') ? img : `${API_URL}${cleanPath}`;
+              return (
+                <div className="post-image-thumb" key={i}>
+                  <img
+                    src={initialSrc}
+                    alt={`Post image ${i + 1}`}
+                    loading="lazy"
+                    onError={(e) => {
+                      const el = e.currentTarget;
+                      if (!el.dataset.fallback) {
+                        el.dataset.fallback = 'true';
+                        el.src = cleanPath;
+                      }
+                    }}
+                  />
+                </div>
+              );
+            })}
             {post.images.length > 3 && (
               <div className="post-image-thumb post-image-more">
                 <ImageIcon size={16} />

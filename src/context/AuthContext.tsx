@@ -426,6 +426,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (ok && data?.success && data?.user) {
       setUser(data.user);
       if (data.token) localStorage.setItem('atl_jwt_token', data.token);
+    } else {
+      const fallbackUser: UserSession = {
+        id: 'guest-viewer',
+        googleId: 'guest-1',
+        email: 'guest@atl.labs',
+        name: 'ATL Explorer',
+        role: 'viewer'
+      };
+      setUser(fallbackUser);
+      localStorage.setItem('atl_user_session', JSON.stringify(fallbackUser));
     }
   };
 

@@ -1587,12 +1587,14 @@ const LandingPage = ({ onNavigateTeam, onNavigateNotices }: LandingPageProps) =>
 
 interface TeamDossierProps {
   onBack: () => void;
+  mode?: 'reality' | 'classified';
+  onModeChange?: (newMode: 'reality' | 'classified') => void;
 }
 
-const TeamDossier = ({ onBack }: TeamDossierProps) => (
+const TeamDossier = ({ onBack, mode, onModeChange }: TeamDossierProps) => (
   // AgentUI is the full dossier system. It imports App.css internally.
   // This wrapper adds no DOM of its own — it is purely a routing boundary.
-  <AgentUI onBack={onBack} />
+  <AgentUI onBack={onBack} mode={mode} onModeChange={onModeChange} />
 );
 
 // ═══════════════════════════════════════════════════════════════════
@@ -1603,6 +1605,7 @@ type AppView = 'booting' | 'landing' | 'team' | 'notices' | 'staybacks' | 'direc
 
 function MainRouter() {
   const [view, setView] = useState<AppView>('booting');
+  const [dossierMode, setDossierMode] = useState<'reality' | 'classified'>('reality');
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { isAuthenticated, isPendingAdminSetup, isPendingRegistration } = useAuth();
 
@@ -1667,7 +1670,15 @@ function MainRouter() {
           onNavigateCommunity={goToCommunity}
           onOpenProfile={() => setIsProfileOpen(true)}
           onOpenDirectory={goToDirectory}
+          onNavigateHome={goToLanding}
           currentView={view as any}
+          dossierMode={dossierMode}
+          onToggleDossierMode={(targetMode) => {
+            setDossierMode(targetMode);
+            if (view !== 'team') {
+              setView('team');
+            }
+          }}
         />
       )}
       <AnimatePresence mode="wait">
@@ -1742,7 +1753,11 @@ function MainRouter() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.35 }}
           >
-            <TeamDossier onBack={goToLanding} />
+            <TeamDossier
+              onBack={goToLanding}
+              mode={dossierMode}
+              onModeChange={setDossierMode}
+            />
           </motion.div>
         )}
 

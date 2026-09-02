@@ -197,7 +197,12 @@ export const PostThreadModal: React.FC<PostThreadModalProps> = ({ postId, onClos
     }
   };
 
-  const resolveImgSrc = (img: string) => img.startsWith('http') ? img : `${API_URL}${img}`;
+  const resolveImgSrc = (img: string) => {
+    if (!img) return '';
+    if (img.startsWith('http://') || img.startsWith('https://') || img.startsWith('data:')) return img;
+    const cleanPath = img.startsWith('/') ? img : `/${img}`;
+    return `${API_URL}${cleanPath}`;
+  };
 
   const openLightbox = (index: number) => setLightboxIndex(index);
   const closeLightbox = () => setLightboxIndex(null);
@@ -215,7 +220,7 @@ export const PostThreadModal: React.FC<PostThreadModalProps> = ({ postId, onClos
       <div className="thread-overlay">
         <div className="thread-panel">
           <div style={{ padding: '80px', textAlign: 'center' }}>
-            <span className="landing-mono-label" style={{ color: '#00ff66' }}>LOADING DATASTREAM...</span>
+            <span className="landing-mono-label" style={{ color: '#ffffff' }}>LOADING DATASTREAM...</span>
           </div>
         </div>
       </div>
@@ -300,7 +305,18 @@ export const PostThreadModal: React.FC<PostThreadModalProps> = ({ postId, onClos
                         key={i}
                         onClick={() => openLightbox(i)}
                       >
-                        <img src={resolveImgSrc(img)} alt={`Image ${i + 1}`} loading="lazy" />
+                        <img
+                          src={resolveImgSrc(img)}
+                          alt={`Image ${i + 1}`}
+                          loading="lazy"
+                          onError={(e) => {
+                            const el = e.currentTarget;
+                            if (!el.dataset.fallback) {
+                              el.dataset.fallback = 'true';
+                              el.src = img.startsWith('/') ? img : `/${img}`;
+                            }
+                          }}
+                        />
                       </div>
                     ))}
                   </div>
@@ -395,6 +411,14 @@ export const PostThreadModal: React.FC<PostThreadModalProps> = ({ postId, onClos
             src={resolveImgSrc(post.images[lightboxIndex])} 
             alt={`Full image ${lightboxIndex + 1}`}
             onClick={e => e.stopPropagation()} 
+            onError={(e) => {
+              const el = e.currentTarget;
+              if (!el.dataset.fallback) {
+                el.dataset.fallback = 'true';
+                const cur = post.images[lightboxIndex];
+                el.src = cur.startsWith('/') ? cur : `/${cur}`;
+              }
+            }}
           />
           {lightboxIndex < post.images.length - 1 && (
             <button className="lightbox-nav lightbox-next" onClick={nextImage}><ChevronRight size={32} /></button>

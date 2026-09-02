@@ -41,10 +41,11 @@ export const MyProfileModal: React.FC<MyProfileModalProps> = ({ isOpen, onClose 
     }
   }, [member]);
 
-  if (!isOpen || !member) return null;
+  if (!isOpen || (!member && !user)) return null;
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!member) return;
     setSuccessMsg('');
     setErrorMsg('');
 
@@ -79,13 +80,15 @@ export const MyProfileModal: React.FC<MyProfileModalProps> = ({ isOpen, onClose 
     }
   };
 
-  const regDate = member.createdAt
+  const regDate = member?.createdAt
     ? new Date(member.createdAt).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
       })
-    : 'N/A';
+    : 'Active Session';
+
+  const userEmail = member?.email || user?.email || 'N/A';
 
   return (
     <AnimatePresence>
@@ -100,8 +103,10 @@ export const MyProfileModal: React.FC<MyProfileModalProps> = ({ isOpen, onClose 
         >
           <div className="profile-modal-header">
             <div>
-              <h2 className="profile-modal-title">My Member Profile</h2>
-              <p className="profile-modal-subtitle">View and update your ATL profile details</p>
+              <h2 className="profile-modal-title">{member ? 'My Member Profile' : 'My Account Profile'}</h2>
+              <p className="profile-modal-subtitle">
+                {member ? 'View and update your Tinkethix profile details' : 'Authenticated session information'}
+              </p>
             </div>
             <button type="button" className="profile-close-btn" onClick={onClose} aria-label="Close">
               <X className="w-5 h-5" />
@@ -116,24 +121,67 @@ export const MyProfileModal: React.FC<MyProfileModalProps> = ({ isOpen, onClose 
             </div>
           )}
 
-          <form onSubmit={handleSave} className="profile-modal-form">
-            {/* Read-Only Info Card */}
-            <div className="profile-readonly-banner">
-              <div className="readonly-item">
-                <Mail className="readonly-icon" />
-                <div>
-                  <span className="readonly-label">Google Email</span>
-                  <span className="readonly-value">{member.email}</span>
+          {/* If not a member, display clean account summary */}
+          {!member ? (
+            <div className="profile-modal-form" style={{ gap: '16px' }}>
+              <div className="profile-readonly-banner">
+                <div className="readonly-item">
+                  <Mail className="readonly-icon" />
+                  <div>
+                    <span className="readonly-label">Account Email</span>
+                    <span className="readonly-value">{userEmail}</span>
+                  </div>
+                </div>
+                <div className="readonly-item">
+                  <Calendar className="readonly-icon" />
+                  <div>
+                    <span className="readonly-label">Access Role</span>
+                    <span className="readonly-value">{user?.role?.toUpperCase() || 'VIEWER'}</span>
+                  </div>
                 </div>
               </div>
-              <div className="readonly-item">
-                <Calendar className="readonly-icon" />
-                <div>
-                  <span className="readonly-label">Registration Date</span>
-                  <span className="readonly-value">{regDate}</span>
+
+              <div className="auth-form-group">
+                <label className="auth-label">Display Name</label>
+                <div className="auth-input" style={{ display: 'flex', alignItems: 'center', color: '#ffffff' }}>
+                  {user?.name || 'Explorer'}
                 </div>
+              </div>
+
+              {user?.adminProfile?.position && (
+                <div className="auth-form-group">
+                  <label className="auth-label">Assigned Designation</label>
+                  <div className="auth-input" style={{ display: 'flex', alignItems: 'center', color: '#00ff66' }}>
+                    {user.adminProfile.position}
+                  </div>
+                </div>
+              )}
+
+              <div className="profile-modal-actions" style={{ marginTop: '12px' }}>
+                <button type="button" className="auth-btn-primary" onClick={onClose} style={{ width: '100%' }}>
+                  Done
+                </button>
               </div>
             </div>
+          ) : (
+            <form onSubmit={handleSave} className="profile-modal-form">
+              {/* Read-Only Info Card */}
+              <div className="profile-readonly-banner">
+                <div className="readonly-item">
+                  <Mail className="readonly-icon" />
+                  <div>
+                    <span className="readonly-label">Google Email</span>
+                    <span className="readonly-value">{userEmail}</span>
+                  </div>
+                </div>
+                <div className="readonly-item">
+                  <Calendar className="readonly-icon" />
+                  <div>
+                    <span className="readonly-label">Registration Date</span>
+                    <span className="readonly-value">{regDate}</span>
+                  </div>
+                </div>
+              </div>
 
             {/* Editable Fields */}
             <div className="auth-form-group">
@@ -227,7 +275,8 @@ export const MyProfileModal: React.FC<MyProfileModalProps> = ({ isOpen, onClose 
               </button>
             </div>
           </form>
-        </motion.div>
+        )}
+      </motion.div>
       </div>
     </AnimatePresence>
   );

@@ -95,10 +95,19 @@ const RosterThumbnail = ({ src, name, isClassified }: { src: string, name: strin
 
 interface AgentUIProps {
   onBack: () => void;
+  mode?: 'reality' | 'classified';
+  onModeChange?: (newMode: 'reality' | 'classified') => void;
 }
 
-export default function AgentUI({ onBack }: AgentUIProps) {
-  const [mode, setMode] = useState<'reality' | 'classified'>('reality');
+export default function AgentUI({ onBack, mode: propMode, onModeChange }: AgentUIProps) {
+  const [internalMode, setInternalMode] = useState<'reality' | 'classified'>(propMode || 'reality');
+  const mode = propMode || internalMode;
+
+  useEffect(() => {
+    if (propMode && propMode !== internalMode) {
+      setInternalMode(propMode);
+    }
+  }, [propMode, internalMode]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [decrypting, setDecrypting] = useState(false);
   const [hasSeenTransition, setHasSeenTransition] = useState(false);
@@ -106,7 +115,23 @@ export default function AgentUI({ onBack }: AgentUIProps) {
   const [mobileDrawerExpanded, setMobileDrawerExpanded] = useState(false);
 
   const rosterRef = useRef<HTMLDivElement>(null);
+  const touchStartY = useRef<number | null>(null);
   const currentMember = teamData[activeIndex];
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartY.current === null) return;
+    const deltaY = e.changedTouches[0].clientY - touchStartY.current;
+    if (deltaY < -40) {
+      setMobileDrawerExpanded(true);
+    } else if (deltaY > 40) {
+      setMobileDrawerExpanded(false);
+    }
+    touchStartY.current = null;
+  };
 
   // KEYBOARD NAVIGATION
   useEffect(() => {
@@ -199,7 +224,8 @@ export default function AgentUI({ onBack }: AgentUIProps) {
         setTimeout(printNext, delay);
       } else {
         setTimeout(() => {
-          setMode(targetMode);
+          setInternalMode(targetMode);
+          if (onModeChange) onModeChange(targetMode);
           setHasSeenTransition(true);
           setTimeout(() => {
             setDecrypting(false);
@@ -270,45 +296,34 @@ export default function AgentUI({ onBack }: AgentUIProps) {
         )}
       </AnimatePresence>
 
-      {/* BACK TO HUB button */}
-      <button className="agent-back-btn" onClick={onBack} aria-label="Return to Hub">
-        &lt;- RETURN_TO_HUB
-      </button>
-
-      {/* HEADER BAR */}
+      {/* HEADER BAR (Responsive container coordinating RETURN TO HUB & MODE SWITCH) */}
       <header className="game-header">
-        <div style={{
-          position: 'fixed',
-          top: '24px',
-          right: '24px',
-          fontFamily: "'JetBrains Mono', monospace",
-          fontSize: '0.65rem',
-          color: '#666666',
-          letterSpacing: '0.1em',
-          fontWeight: 700,
-          zIndex: 200
-        }}>
-          [SYSTEM_NODES // {mode === 'reality' ? '13_ACTIVE_UNITS' : '13_AGENTS_DETECTED'}]
+        <div className="game-header-controls-left">
+          <button className="agent-back-btn" onClick={onBack} aria-label="Return to Hub">
+            &lt;- RETURN_TO_HUB
+          </button>
+
+          {/* Toggle Segmented Switch (Desktop: comfortable clearance from Back button) */}
+          <div className="toggle-switch-wrapper desktop-only-switch">
+            <div className="toggle-active-bg" />
+            <button
+              className={`toggle-button ${mode === 'reality' ? 'active' : ''}`}
+              onClick={() => triggerTransition('reality')}
+              aria-label="Switch to Reality Mode"
+            >
+              REALITY
+            </button>
+            <button
+              className={`toggle-button ${mode === 'classified' ? 'active' : ''}`}
+              onClick={() => triggerTransition('classified')}
+              aria-label="Switch to Classified Mode"
+            >
+              CLASSIFIED
+            </button>
+          </div>
         </div>
 
-        {/* Toggle Segmented Switch */}
-        <div className="toggle-switch-wrapper">
-          <div className="toggle-active-bg" />
-          <button
-            className={`toggle-button ${mode === 'reality' ? 'active' : ''}`}
-            onClick={() => triggerTransition('reality')}
-            aria-label="Switch to Reality Mode"
-          >
-            REALITY
-          </button>
-          <button
-            className={`toggle-button ${mode === 'classified' ? 'active' : ''}`}
-            onClick={() => triggerTransition('classified')}
-            aria-label="Switch to Classified Mode"
-          >
-            CLASSIFIED
-          </button>
-        </div>
+        <div className="game-header-right-clearance" />
       </header>
 
       {/* MAIN STAGE VIEW */}
@@ -324,7 +339,16 @@ export default function AgentUI({ onBack }: AgentUIProps) {
         </div>
 
         {/* CENTER CHARACTER ARTWORK (VISUAL FOCUS) */}
-        <div className="center-character-region">
+        <div
+          className="center-character-region"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          onClick={() => {
+            if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+              setMobileDrawerExpanded(prev => !prev);
+            }
+          }}
+        >
           {/* Floating AAA HUD markers around the character */}
           <div className="hud-floating-marker left-top-marker">
             <span className="hud-marker-label">DESIGNATION</span>
@@ -568,9 +592,21 @@ export default function AgentUI({ onBack }: AgentUIProps) {
           <div
             className="drawer-handle-tab"
             onClick={() => setMobileDrawerExpanded(!mobileDrawerExpanded)}
+            role="button"
+            tabIndex={0}
+            aria-expanded={mobileDrawerExpanded}
+            aria-label="Toggle profile records"
           >
-            <span>{mobileDrawerExpanded ? 'HIDE RECORDS' : 'VIEW DOSSIER / STATS'}</span>
-            {mobileDrawerExpanded ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
+            <div className="drawer-handle-info">
+              <span className="drawer-handle-name">{displayName}</span>
+              <span className="drawer-handle-role">
+                // {mode === 'reality' ? currentMember.position : currentMember.designation}
+              </span>
+            </div>
+            <div className="drawer-handle-action">
+              <span>{mobileDrawerExpanded ? 'HIDE RECORDS' : 'EXPAND DOSSIER'}</span>
+              {mobileDrawerExpanded ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
+            </div>
           </div>
 
           <div className="drawer-body-content">

@@ -184,7 +184,8 @@
 ═══════════════════════════════════════════════════════════════════════════ */
 .landing-hero-section {
   position: relative;
-  width: 100vw;
+  width: 100%;
+  max-width: 100%;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -347,22 +348,70 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   max-width: 1400px;
   margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .landing-showcase-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 48px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .landing-showcase-col-left, .landing-showcase-col-right {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.landing-exhibition-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 @media (max-width: 1024px) {
+  .landing-showcase-section {
+    padding: 80px 32px;
+  }
   .landing-showcase-grid {
     grid-template-columns: 1fr;
+    gap: 48px;
+  }
+}
+
+@media (max-width: 768px) {
+  .landing-showcase-section {
+    padding: 60px 20px;
+  }
+  .landing-showcase-grid {
+    gap: 36px;
+  }
+}
+
+@media (max-width: 480px) {
+  .landing-showcase-section {
+    padding: 40px 16px;
+  }
+  .landing-showcase-grid {
+    gap: 28px;
+  }
+}
+
+@media (max-width: 360px) {
+  .landing-showcase-section {
+    padding: 32px 12px;
+  }
+  .landing-showcase-grid {
+    gap: 24px;
   }
 }
 
@@ -569,12 +618,17 @@
   background: rgba(10,10,10,0.85);
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: 4px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   height: 380px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   perspective: 600px;
+  box-sizing: border-box;
+  touch-action: pan-y;
 }
 
 /* Crosshair corner markers */
@@ -584,8 +638,8 @@
 }
 .landing-cad-ch-tl { top: 12px; left: 12px; }
 .landing-cad-ch-tr { top: 12px; right: 12px; }
-.landing-cad-ch-bl { bottom: 12px; left: 12px; }
-.landing-cad-ch-br { bottom: 12px; right: 12px; }
+.landing-cad-ch-bl { bottom: 36px; left: 12px; }
+.landing-cad-ch-br { bottom: 36px; right: 12px; }
 
 .landing-ch-h {
   position: absolute;
@@ -622,18 +676,23 @@
   position: absolute;
   bottom: 0; left: 0; right: 0;
   display: flex;
-  background: rgba(0,0,0,0.5);
-  border-top: 1px solid rgba(255,255,255,0.07);
+  background: rgba(0,0,0,0.6);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  overflow: hidden;
+  box-sizing: border-box;
 }
 .landing-cad-telemetry span {
   flex: 1;
   text-align: center;
-  padding: 6px 0;
+  padding: 6px 2px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.55rem;
-  color: rgba(255,255,255,0.3);
-  letter-spacing: 0.08em;
+  font-size: clamp(0.42rem, 1.6vw, 0.55rem);
+  color: rgba(255,255,255,0.4);
+  letter-spacing: clamp(0.02em, 0.4vw, 0.08em);
   border-right: 1px solid rgba(255,255,255,0.06);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .landing-cad-telemetry span:last-child { border-right: none; }
 
@@ -796,11 +855,16 @@
   .landing-node-section,
   .landing-cad-section { padding: 48px 0; }
   .landing-svg-wrapper { width: 280px; height: 280px; }
-  .landing-cad-box     { height: 280px; }
+  .landing-cad-box     { height: clamp(260px, 70vw, 320px); }
   .landing-ambient     { opacity: 0.4; }
   .landing-bp-sch-tl,
   .landing-bp-sch-br   { display: none; }
   .landing-cad-controls { flex-direction: column; }
+}
+
+@media (max-width: 360px) {
+  .landing-extra { padding: 0 12px 40px; }
+  .landing-cad-box { height: 250px; }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -1131,25 +1195,31 @@
 ═══════════════════════════════════════════════════════════════════════════ */
 .landing-cad-controls-top {
   position: absolute;
-  top: 16px;
+  top: 14px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 12px;
+  gap: clamp(6px, 1.8vw, 12px);
   z-index: 10;
+  width: max-content;
+  max-width: calc(100% - 24px);
+  justify-content: center;
+  box-sizing: border-box;
 }
 
 .landing-cad-toggle {
-  background: rgba(0,0,0,0.6);
-  border: 1px solid rgba(255,255,255,0.2);
-  color: rgba(255,255,255,0.6);
+  background: rgba(0,0,0,0.65);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: rgba(255,255,255,0.7);
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.6rem;
-  padding: 6px 12px;
+  font-size: clamp(0.50rem, 1.8vw, 0.6rem);
+  padding: clamp(4px, 1.2vw, 6px) clamp(6px, 2vw, 12px);
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(6px);
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .landing-cad-toggle:hover {
@@ -1173,7 +1243,9 @@
 }
 
 .landing-exhibition-header {
-  margin-bottom: 40px;
+  margin-bottom: 32px;
+  width: 100%;
+  min-width: 0;
 }
 
 .landing-exhibition-grid {
@@ -1185,42 +1257,56 @@
 .landing-exhibition-card {
   background: transparent;
   border-left: 2px solid #00ff66;
-  padding: 24px 32px;
+  padding: clamp(16px, 3.5vw, 24px) clamp(14px, 3.5vw, 32px);
   display: flex;
   flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .landing-exhibition-title {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 1rem;
+  font-size: clamp(0.82rem, 3.2vw, 1rem);
   font-weight: 700;
   color: #fff;
-  margin-bottom: 16px;
-  letter-spacing: 0.05em;
+  margin-bottom: 14px;
+  letter-spacing: clamp(0.02em, 0.5vw, 0.05em);
+  word-break: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.35;
 }
 
 .landing-exhibition-text {
-  font-size: 0.95rem;
+  font-size: clamp(0.85rem, 2.4vw, 0.95rem);
   color: rgba(255,255,255,0.7);
   line-height: 1.7;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   flex-grow: 1;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .landing-exhibition-tags {
   display: flex;
-  gap: 12px;
+  gap: 8px 12px;
   flex-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .landing-exhibition-tag {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.55rem;
+  font-size: clamp(0.48rem, 1.8vw, 0.55rem);
   color: #00ff66;
   background: rgba(0,255,102,0.1);
   padding: 4px 8px;
   border-radius: 4px;
   letter-spacing: 0.08em;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .landing-db-canvas-wrapper {

@@ -229,9 +229,10 @@
   background-color: rgba(255, 255, 255, 0.05);
 }
 .nb-filter-chip.active {
-  background: #ffffff;
-  border-color: #ffffff;
-  color: #000000;
+  background: rgba(0, 255, 102, 0.12);
+  border-color: rgba(0, 255, 102, 0.4);
+  color: #00ff66;
+  text-shadow: 0 0 8px rgba(0, 255, 102, 0.3);
   font-weight: 600;
 }
 
@@ -972,11 +973,13 @@
 /* Responsive adjustments */
 @media (max-width: 640px) {
   .nb-header-inner { padding: 0 16px; }
-  .nb-toolbar      { padding: 0 16px; margin-top: 20px; }
+  .nb-toolbar      { padding: 0 16px; margin-top: 16px; }
   .nb-toolbar-top  { flex-direction: column; align-items: stretch; }
   .nb-search-wrap  { max-width: 100%; }
   .nb-new-btn      { width: 100%; justify-content: center; }
-  .nb-main         { padding: 0 16px; margin: 20px auto; }
+  .nb-filters      { overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; width: 100%; padding-bottom: 4px; }
+  .nb-filters::-webkit-scrollbar { display: none; }
+  .nb-main         { padding: 0 16px; margin: 16px auto; max-width: 100%; overflow-x: hidden; }
   .nb-logo-label   { display: none; }
   .ne-fields       { padding: 20px 16px; }
   .ne-editor-wrap  { padding: 16px 16px 0; }

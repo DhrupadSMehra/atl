@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import PostCard from './PostCard';
 import PostThreadModal from './PostThreadModal';
@@ -10,7 +10,7 @@ interface CommunityBoardPageProps {
   onBack: () => void;
 }
 
-export const CommunityBoardPage: React.FC<CommunityBoardPageProps> = ({ onBack: _onBack }) => {
+export const CommunityBoardPage: React.FC<CommunityBoardPageProps> = ({ onBack }) => {
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -70,6 +70,17 @@ export const CommunityBoardPage: React.FC<CommunityBoardPageProps> = ({ onBack: 
     <div className="community-board-container">
       <header className="community-header">
         <div className="community-title-section">
+          {onBack && (
+            <button
+              type="button"
+              className="community-back-btn directory-back-btn"
+              onClick={onBack}
+              id="community-back-btn"
+              aria-label="Back to Dashboard"
+            >
+              <ArrowLeft className="w-4 h-4" /> Back to Dashboard
+            </button>
+          )}
           <span className="landing-mono-label">ATL_NETWORK // THREADS</span>
           <h1 className="community-title">Community Feed</h1>
           <p className="community-subtitle">Share research, ideas, and system logs.</p>
@@ -81,7 +92,7 @@ export const CommunityBoardPage: React.FC<CommunityBoardPageProps> = ({ onBack: 
       </header>
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '40px', color: '#00ff66', fontFamily: "'JetBrains Mono', monospace" }}>
+        <div style={{ textAlign: 'center', padding: '40px', color: '#a1a1aa', fontFamily: "'JetBrains Mono', monospace" }}>
           [FETCHING_RECORDS...]
         </div>
       ) : error ? (

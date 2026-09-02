@@ -40,8 +40,12 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
   next();
 });
 
-// Serve uploaded files as static assets
-app.use('/uploads', express.static(path.join(process.cwd(), 'public', 'uploads')));
+// Serve uploaded files as static assets with CORP & CORS headers
+app.use('/uploads', (_req, res, next) => {
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  next();
+}, express.static(path.join(process.cwd(), 'public', 'uploads')));
 
 // Mount Authentication Routes
 app.use('/api/auth', authRoutes);
