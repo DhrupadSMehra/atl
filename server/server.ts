@@ -2,12 +2,12 @@ import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
-import { connectDB } from './config/db';
-import authRoutes from './routes/auth';
-import noticeRoutes from './routes/notices';
-import memberRoutes from './routes/members';
-import stayBackRoutes from './routes/staybacks';
-import communityRoutes from './routes/community';
+import { connectDB } from './config/db.js';
+import authRoutes from './routes/auth.js';
+import noticeRoutes from './routes/notices.js';
+import memberRoutes from './routes/members.js';
+import stayBackRoutes from './routes/staybacks.js';
+import communityRoutes from './routes/community.js';
 
 dotenv.config();
 

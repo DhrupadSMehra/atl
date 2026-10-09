@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import { DepartmentEnum } from './Member';
+import { DepartmentEnum } from './Member.js';
 
 export type StayBackStatusEnum = 
   | 'DRAFT'

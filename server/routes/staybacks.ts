@@ -1,9 +1,9 @@
 import { Router, Request, Response } from 'express';
 import mongoose from 'mongoose';
-import { StayBack, StayBackStatusEnum } from '../models/StayBack';
-import { StayBackApplication, ApplicationStatusEnum } from '../models/StayBackApplication';
-import { Member, DepartmentEnum } from '../models/Member';
-import { verifyToken, AuthRequest } from '../middleware/auth';
+import { StayBack, StayBackStatusEnum } from '../models/StayBack.js';
+import { StayBackApplication, ApplicationStatusEnum } from '../models/StayBackApplication.js';
+import { Member, DepartmentEnum } from '../models/Member.js';
+import { verifyToken, AuthRequest } from '../middleware/auth.js';
 
 const router = Router();
 
@@ -209,7 +209,8 @@ router.get('/my-applications', verifyToken, async (req: AuthRequest, res: Respon
  */
 router.get('/:id', async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const rawId = req.params.id;
+    const id = Array.isArray(rawId) ? rawId[0] : rawId;
     if (!mongoose.Types.ObjectId.isValid(id)) {
       res.status(400).json({ success: false, error: 'Invalid StayBack ID.' });
       return;
@@ -299,7 +300,8 @@ router.post('/:id/apply', verifyToken, async (req: AuthRequest, res: Response) =
       return;
     }
 
-    const { id } = req.params;
+    const rawId = req.params.id;
+    const id = Array.isArray(rawId) ? rawId[0] : rawId;
     if (!mongoose.Types.ObjectId.isValid(id)) {
       res.status(400).json({ success: false, error: 'Invalid StayBack ID.' });
       return;
@@ -583,7 +585,28 @@ router.get('/:id/applications', verifyToken, async (req: AuthRequest, res: Respo
         internalNotes: app.internalNotes || '',
         memberMessage: app.memberMessage || ''
       };
-    }).filter(Boolean);
+    }).filter((entry): entry is {
+      applicationId: string;
+      stayBackId: string;
+      member: {
+        memberId: string;
+        googleId: string;
+        email: string;
+        fullName: string;
+        studentClass: string;
+        section: string;
+        contactNumber: string;
+        department: string;
+        role: string;
+        profileCompleted: boolean;
+        createdAt: Date;
+      };
+      status: string;
+      submittedAt: Date;
+      reviewedAt: Date;
+      internalNotes: string;
+      memberMessage: string;
+    } => entry !== null);
 
     // Apply Filters (Search by name, department, status)
     let filtered = formatted;

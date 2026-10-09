@@ -1,10 +1,10 @@
 import express, { Response } from 'express';
 import multer from 'multer';
-import { AuthRequest, verifyToken } from '../middleware/auth';
-import { Post } from '../models/Post';
-import { Comment } from '../models/Comment';
-import { User } from '../models/User';
-import { uploadService } from '../services/uploadService';
+import { AuthRequest, verifyToken } from '../middleware/auth.js';
+import { Post } from '../models/Post.js';
+import { Comment } from '../models/Comment.js';
+import { User } from '../models/User.js';
+import { uploadService } from '../services/uploadService.js';
 import mongoose from 'mongoose';
 
 const router = express.Router();

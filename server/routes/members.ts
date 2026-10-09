@@ -2,9 +2,9 @@ import { Router, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import { Member, DepartmentEnum } from '../models/Member';
-import { User } from '../models/User';
-import { verifyToken, AuthRequest } from '../middleware/auth';
+import { Member, DepartmentEnum } from '../models/Member.js';
+import { User } from '../models/User.js';
+import { verifyToken, AuthRequest } from '../middleware/auth.js';
 
 dotenv.config();
 

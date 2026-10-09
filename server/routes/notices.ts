@@ -1,8 +1,8 @@
 import { Router, Response } from 'express';
 import multer from 'multer';
-import { verifyToken, AuthRequest } from '../middleware/auth';
-import { Notice } from '../models/Notice';
-import { uploadService } from '../services/uploadService';
+import { verifyToken, AuthRequest } from '../middleware/auth.js';
+import { Notice } from '../models/Notice.js';
+import { uploadService } from '../services/uploadService.js';
 
 const router = Router();
 
@@ -152,7 +152,7 @@ router.post('/', verifyToken, requireAdmin, upload.array('images', 10), async (r
       res.status(400).json({ success: false, error: uploadErrors.join(' | ') }); return;
     }
 
-    const content     = parseField<Record<string, unknown>>(req.body.content);
+    const content     = parseField<Record<string, unknown>>(req.body.content) ?? undefined;
     const contentText = content ? extractText(content) : '';
     const coverIdx    = Math.min(parseInt(coverImageIndex) || 0, attachments.length - 1);
     const coverImage  = attachments.length > 0 ? attachments[Math.max(0, coverIdx)].url : undefined;
@@ -211,7 +211,7 @@ router.put('/:id', verifyToken, requireAdmin, upload.array('images', 10), async 
     }
 
     const allAttachments = [...keptAttachments, ...newAttachments];
-    const content     = parseField<Record<string, unknown>>(req.body.content) ?? notice.content;
+    const content     = parseField<Record<string, unknown>>(req.body.content) ?? notice.content ?? undefined;
     const contentText = content ? extractText(content) : '';
     const coverIdx    = Math.min(parseInt(coverImageIndex) || 0, allAttachments.length - 1);
     const coverImage  = allAttachments.length > 0
@@ -309,13 +309,20 @@ router.post('/:id/duplicate', verifyToken, requireAdmin, async (req: AuthRequest
     const source = await Notice.findById(req.params.id).lean();
     if (!source) { res.status(404).json({ success: false, error: 'Notice not found.' }); return; }
 
-    const { _id, createdAt, updatedAt, ...rest } = source as Record<string, unknown>;
+    const src = source as unknown as {
+      _id: unknown;
+      createdAt: unknown;
+      updatedAt: unknown;
+      title: string;
+      [key: string]: unknown;
+    };
+    const { _id, createdAt, updatedAt, ...rest } = src;
     void _id; void createdAt; void updatedAt;
 
     const now       = new Date();
     const duplicate = await Notice.create({
       ...rest,
-      title:      `${source.title} (Copy)`,
+      title:      `${src.title} (Copy)`,
       status:     'draft',
       pinned:     false,
       authorId:   req.user!.id,
@@ -324,7 +331,7 @@ router.post('/:id/duplicate', verifyToken, requireAdmin, async (req: AuthRequest
       editedBy:   { id: req.user!.id, name: req.user!.name },
     });
 
-    console.log(`[Notices] Duplicated notice "${source.title}" → "${duplicate.title}" (${duplicate._id})`);
+    console.log(`[Notices] Duplicated notice "${src.title}" → "${duplicate.title}" (${duplicate._id})`);
     res.status(201).json({ success: true, notice: duplicate });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Unknown error';

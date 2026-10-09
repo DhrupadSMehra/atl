@@ -3,11 +3,11 @@ import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
 import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs';
-import { User, IUser, AdminPosition } from '../models/User';
-import { Member } from '../models/Member';
-import { Post } from '../models/Post';
-import { Comment } from '../models/Comment';
-import { verifyToken, AuthRequest } from '../middleware/auth';
+import { User, IUser, AdminPosition } from '../models/User.js';
+import { Member } from '../models/Member.js';
+import { Post } from '../models/Post.js';
+import { Comment } from '../models/Comment.js';
+import { verifyToken, AuthRequest } from '../middleware/auth.js';
 import mongoose from 'mongoose';
 
 dotenv.config();
